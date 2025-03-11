@@ -24,7 +24,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/eventslist" element={<EventsList />} />
-          <Route path="/logout" element={<Logout />} /> {/* ✅ Logout Route */}
+          <Route path="/logout" element={<Logout />} />
           <Route path="*" element={<Notfound />} />
         </Routes>
       </main>

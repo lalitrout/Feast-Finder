@@ -7,9 +7,9 @@ html, body, #root {
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure full viewport height */
+  min-height: 100vh;
 }
 
 main {
-  flex-grow: 1; /* Push footer to bottom */
+  flex-grow: 1;
 }

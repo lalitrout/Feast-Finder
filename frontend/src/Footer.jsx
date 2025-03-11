@@ -5,8 +5,8 @@ const Footer = () => {
     <footer
       className="text-center py-4 mt-auto"
       style={{
-        backgroundColor: "#FFF5E1", // Creamy background
-        color: "#333", // Dark text
+        backgroundColor: "#FFF5E1", 
+        color: "#333", 
         width: "100%",
       }}
     >
