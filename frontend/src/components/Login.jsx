@@ -31,7 +31,6 @@ const Login = () => {
           const lastPage = localStorage.getItem("lastPage") || "/";
           localStorage.removeItem("lastPage");
           navigate(lastPage);
-          window.location.reload();
         }, 2000);
       } else {
         toast.error("Login failed. Please try again.");
