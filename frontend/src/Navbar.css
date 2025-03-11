@@ -1,0 +1,22 @@
+\/* Navbar background */
+.navbar {
+  background-color: #ffffff !important; /* White background */
+}
+
+/* Navbar links */
+.nav-link {
+  color: #333 !important; /* Default text color */
+  font-weight: 500;
+  transition: color 0.3s ease-in-out;
+}
+
+/* Hover effect */
+.nav-link:hover {
+  color: #fa5 !important; /* Orange hover effect */
+}
+
+.nav-head {
+  font-family: "Chewy";
+  color: #fa5 !important;
+  text-shadow: 2px 2px 4px rgba(198, 197, 197, 0.3);
+}
