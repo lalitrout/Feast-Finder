@@ -17,12 +17,16 @@ const PORT = process.env.PORT || 3001;
 const url = process.env.MONGO_URL;
 
 // Middleware
-app.use(cors({
-    origin: ["https://frontend-6lqu7gw7q-lalit-routs-projects.vercel.app/"], // Allow only your frontend domain
+const cors = require("cors");
+
+const corsOptions = {
+    origin: ["https://frontend-6lqu7gw7q-lalit-routs-projects.vercel.app"], 
     methods: "GET,POST,DELETE",
     allowedHeaders: "Content-Type,Authorization",
-    credentials: true // Allow cookies & authentication headers
-}));
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 
   
 app.use(bodyParser.json());
