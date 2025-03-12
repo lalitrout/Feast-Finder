@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const API_BASE_URL ="https://feast-finder.onrender.com";
+const API_BASE_URL = "https://feast-finder.onrender.com";
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -25,7 +25,7 @@ const EventsList = () => {
       setEvents(response.data);
     } catch (error) {
       toast.error("Error fetching events!");
-      console.error("Error fetching events:", error);
+      console.error("❌ Error fetching events:", error.response?.data || error.message);
     }
   };
 
@@ -47,18 +47,18 @@ const EventsList = () => {
         return;
       }
 
-      await axios.post(
+      const response = await axios.post(
         `${API_BASE_URL}/api/events`,
         { ...eventDetails, createdBy: userId }, // Fixed field name
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      setEvents([...events, response.data]); // Update list instantly
       setEventDetails({ name: "", location: "", date: "", img: "" });
       setShowForm(false);
-      fetchEvents();
       toast.success("Event added successfully!");
     } catch (error) {
-      console.error("Error adding event:", error.response?.data || error.message);
+      console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add event. Try again later.");
     }
   };
@@ -84,7 +84,7 @@ const EventsList = () => {
       setEvents(events.filter((event) => event._id !== id));
       toast.success("Event deleted successfully!");
     } catch (error) {
-      console.error("Error deleting event:", error.response?.data || error.message);
+      console.error("❌ Error deleting event:", error.response?.data || error.message);
       toast.error("Failed to delete event.");
     }
   };
@@ -92,7 +92,7 @@ const EventsList = () => {
   return (
     <div className="container py-5">
       <ToastContainer position="top-right" autoClose={3000} />
-      
+
       <div className="d-flex mb-3">
         <button
           className="btn me-3"
@@ -131,7 +131,7 @@ const EventsList = () => {
                 <p className="card-text">
                   📍 {event.location} <br />
                   📅 {event.date ? new Date(event.date).toDateString() : "Date Not Available"} <br />
-                  👤 Posted by: {event.createdBy?.name || "Unknown"}
+                  👤 Posted by: {event.createdBy ? event.createdBy.name || "Unknown" : "Unknown"}
                 </p>
 
                 {event.createdBy?._id === userId && (
