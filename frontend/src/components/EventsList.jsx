@@ -4,6 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://feast-finder.onrender.com";
+
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -19,7 +21,7 @@ const EventsList = () => {
   // Fetch Events
   const fetchEvents = async () => {
     try {
-      const response = await axios.get("https://feast-finder.onrender.com/api/events");
+      const response = await axios.get(`${API_BASE_URL}/api/events`);
       setEvents(response.data);
     } catch (error) {
       toast.error("Error fetching events!");
@@ -46,8 +48,8 @@ const EventsList = () => {
       }
 
       await axios.post(
-        "https://feast-finder.onrender.com/api/events",
-        { ...eventDetails, owner: userId },
+        `${API_BASE_URL}/api/events`,
+        { ...eventDetails, createdBy: userId }, // Fixed field name
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -62,8 +64,8 @@ const EventsList = () => {
   };
 
   // Delete Event
-  const deleteEvent = async (id, createdBy) => {
-    if (createdBy !== userId) {
+  const deleteEvent = async (id, ownerId) => {
+    if (ownerId !== userId) {
       toast.warn("You can only delete your own events!");
       return;
     }
@@ -75,7 +77,7 @@ const EventsList = () => {
         return;
       }
 
-      await axios.delete(`https://feast-finder.onrender.com/api/events/api/events/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/events/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
