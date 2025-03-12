@@ -19,7 +19,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:3001/api/login", formData);
+      const response = await axios.post("https://feast-finder.onrender.com/api/login", formData);
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);

@@ -19,7 +19,7 @@ const EventsList = () => {
   // Fetch Events
   const fetchEvents = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/events");
+      const response = await axios.get("https://feast-finder.onrender.com/api/events");
       setEvents(response.data);
     } catch (error) {
       toast.error("Error fetching events!");
@@ -46,7 +46,7 @@ const EventsList = () => {
       }
 
       await axios.post(
-        "http://localhost:3001/api/events",
+        "https://feast-finder.onrender.com/api/events",
         { ...eventDetails, owner: userId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -75,7 +75,7 @@ const EventsList = () => {
         return;
       }
 
-      await axios.delete(`http://localhost:3001/api/events/${id}`, {
+      await axios.delete(`https://feast-finder.onrender.com/api/events/api/events/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

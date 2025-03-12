@@ -19,7 +19,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:3001/api/users", {
+      const response = await axios.post("https://feast-finder.onrender.com/api/users", {
         name: formData.name,
         email: formData.email,
         password: formData.password,
