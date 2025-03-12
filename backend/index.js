@@ -17,7 +17,12 @@ const PORT = process.env.PORT || 3001;
 const url = process.env.MONGO_URL;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: "https://frontend-6lqu7gw7q-lalit-routs-projects.vercel.app/",
+    methods: "GET,POST,DELETE",
+    allowedHeaders: "Content-Type,Authorization"
+  }));
+  
 app.use(bodyParser.json());
 
 // Connect to MongoDB
