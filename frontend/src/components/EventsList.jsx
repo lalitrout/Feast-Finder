@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "https://feast-finder.onrender.com";
+const API_BASE_URL ="https://feast-finder.onrender.com";
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
