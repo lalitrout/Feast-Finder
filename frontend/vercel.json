@@ -1,15 +1,11 @@
 {
-    "rewrites": [
-      { "source": "/(.*)", "destination": "/index.html" }
-    ],
-    "redirects": [
-      { "source": "/eventslist", "destination": "/eventslist", "statusCode": 200 }
-    ],
-    "headers": [
-      {
-        "source": "/(.*)",
-        "headers": [{ "key": "Cache-Control", "value": "no-store" }]
-      }
-    ]
-  }
-  
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    }
+  ]
+}
