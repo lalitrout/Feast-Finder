@@ -17,9 +17,9 @@ const url = process.env.MONGO_URL;
 
 // ✅ Middleware
 const corsOptions = {
-    origin: ["https://frontend-6lqu7gw7q-lalit-routs-projects.vercel.app"], 
+    origin: "*", 
     methods: ["GET", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: "Content-Type,Authorization",
     credentials: true
 };
 

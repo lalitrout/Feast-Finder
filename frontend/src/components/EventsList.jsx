@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const API_BASE_URL = "https://feast-finder.onrender.com";
+const API_BASE_URL = "https://feast-finder.onrender.com"; // Backend URL
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -21,7 +21,7 @@ const EventsList = () => {
   // Fetch Events
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/events`);
+      const response = await axios.get(`${API_BASE_URL}/api/events`, { withCredentials: true });
       setEvents(response.data);
     } catch (error) {
       toast.error("Error fetching events!");
@@ -49,8 +49,8 @@ const EventsList = () => {
 
       const response = await axios.post(
         `${API_BASE_URL}/api/events`,
-        { ...eventDetails, createdBy: userId }, // Fixed field name
-        { headers: { Authorization: `Bearer ${token}` } }
+        { ...eventDetails, createdBy: userId },
+        { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
 
       setEvents([...events, response.data]); // Update list instantly
@@ -79,6 +79,7 @@ const EventsList = () => {
 
       await axios.delete(`${API_BASE_URL}/api/events/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       });
 
       setEvents(events.filter((event) => event._id !== id));
