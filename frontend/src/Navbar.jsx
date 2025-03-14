@@ -4,6 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js"; 
 import "./Navbar.css";
 import { toast } from "react-toastify";
+import favicon from "./assets/favicon-32x32.png";
+
 
 function Navbar() {
   const navigate = useNavigate();
@@ -41,7 +43,7 @@ function Navbar() {
       <nav className="navbar navbar-expand-lg border-bottom bg-white shadow-sm fixed-top">
         <div className="container-fluid">
           <Link className="navbar-brand d-flex align-items-center" to="/">
-            <img src="/favicon-32x32.png" alt="FeastFinder Logo" width="40" height="40" className="me-2" />
+            <img src={favicon} alt="FeastFinder Logo" width="40" height="40" className="me-2" />
             <span className="fw-bold fs-3 nav-head">FeastFinder</span>
           </Link>
 
