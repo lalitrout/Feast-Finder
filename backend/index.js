@@ -17,10 +17,10 @@ const url = process.env.MONGO_URL;
 
 // ✅ Middleware
 const corsOptions = {
-    origin: "*", 
+    origin: "https://frontend-sigma-five-47.vercel.app", // Update with your frontend URL
     methods: ["GET", "POST", "DELETE"],
-    allowedHeaders: "Content-Type,Authorization",
-    credentials: true
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // Required for cookies/tokens
 };
 
 app.use(cors(corsOptions));
