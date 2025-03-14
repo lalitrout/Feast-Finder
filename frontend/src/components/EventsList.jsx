@@ -31,6 +31,13 @@ const EventsList = () => {
 
   useEffect(() => {
     fetchEvents();
+
+    // Show notification after page reload
+    const eventMessage = localStorage.getItem("eventAdded");
+    if (eventMessage) {
+      toast.success(eventMessage);
+      localStorage.removeItem("eventAdded"); // Remove the message after displaying
+    }
   }, []);
 
   // Add Event
@@ -47,16 +54,17 @@ const EventsList = () => {
         return;
       }
 
-      const response = await axios.post(
+      await axios.post(
         `${API_BASE_URL}/api/events`,
         { ...eventDetails, createdBy: userId },
         { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
 
-      setEvents([...events, response.data]); // Update list instantly
-      setEventDetails({ name: "", location: "", date: "", img: "" });
-      setShowForm(false);
-      toast.success("Event added successfully!");
+      // Store success message in localStorage before reloading
+      localStorage.setItem("eventAdded", "Event added successfully!");
+
+      // Reload the page
+      window.location.reload();
     } catch (error) {
       console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add event. Try again later.");
