@@ -33,7 +33,7 @@ const EventsList = () => {
     fetchEvents();
   }, []);
 
-  // Add Event (Without Reloading)
+  // Add Event
   const addEvent = async () => {
     if (!eventDetails.name || !eventDetails.location || !eventDetails.date || !eventDetails.img) {
       toast.warn("Please fill all fields.");
@@ -47,18 +47,16 @@ const EventsList = () => {
         return;
       }
 
-      const response = await axios.post(
+      await axios.post(
         `${API_BASE_URL}/api/events`,
         { ...eventDetails, createdBy: userId },
         { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
 
-      // Update state directly instead of reloading
-      setEvents((prevEvents) => [...prevEvents, response.data]);
+      toast.success("Event added successfully!", {
+        onClose: () => setTimeout(() => window.location.reload(), 300), // Reload after toast closes
+      });
 
-      toast.success("Event added successfully!");
-
-      // Clear the form
       setEventDetails({ name: "", location: "", date: "", img: "" });
 
     } catch (error) {
@@ -86,8 +84,10 @@ const EventsList = () => {
         withCredentials: true,
       });
 
-      setEvents(events.filter((event) => event._id !== id));
-      toast.success("Event deleted successfully!");
+      toast.success("Event deleted successfully!", {
+        onClose: () => setTimeout(() => window.location.reload(), 300), // Reload after toast closes
+      });
+
     } catch (error) {
       console.error("❌ Error deleting event:", error.response?.data || error.message);
       toast.error("Failed to delete event.");
@@ -118,7 +118,9 @@ const EventsList = () => {
             value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
           <input type="text" className="form-control mb-2" placeholder="Paste image address here" 
             value={eventDetails.img} onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })} />
-            <small className="text-muted p-2" style={{ fontSize: "0.8rem" }}>For best results, use a direct image address. Example: Right-click an image on Unsplash, select 'Copy Image Address,' and paste here.</small>
+          <small className="text-muted p-2" style={{ fontSize: "0.8rem" }}>
+            For best results, use a direct image address. Example: Right-click an image on Unsplash, select 'Copy Image Address,' and paste here.
+          </small>
           <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
             Submit Event
           </button>
