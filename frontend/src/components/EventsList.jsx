@@ -22,11 +22,16 @@ const EventsList = () => {
   // Fetch Events
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/events`, { withCredentials: true });
+      const response = await axios.get(`${API_BASE_URL}/api/events`, {
+        withCredentials: true,
+      });
       setEvents(response.data);
     } catch (error) {
       toast.error("Error fetching events!");
-      console.error("❌ Error fetching events:", error.response?.data || error.message);
+      console.error(
+        "❌ Error fetching events:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -43,7 +48,12 @@ const EventsList = () => {
 
   // Add Event
   const addEvent = async () => {
-    if (!eventDetails.name || !eventDetails.location || !eventDetails.date || !eventDetails.img) {
+    if (
+      !eventDetails.name ||
+      !eventDetails.location ||
+      !eventDetails.date ||
+      !eventDetails.img
+    ) {
       toast.warn("Please fill all fields.");
       return;
     }
@@ -67,7 +77,10 @@ const EventsList = () => {
       // Reload the page
       window.location.reload();
     } catch (error) {
-      console.error("❌ Error adding event:", error.response?.data || error.message);
+      console.error(
+        "❌ Error adding event:",
+        error.response?.data || error.message
+      );
       toast.error("Failed to add event. Try again later.");
     }
   };
@@ -94,7 +107,10 @@ const EventsList = () => {
       setEvents(events.filter((event) => event._id !== id));
       toast.success("Event deleted successfully!");
     } catch (error) {
-      console.error("❌ Error deleting event:", error.response?.data || error.message);
+      console.error(
+        "❌ Error deleting event:",
+        error.response?.data || error.message
+      );
       toast.error("Failed to delete event.");
     }
   };
@@ -115,16 +131,58 @@ const EventsList = () => {
 
       {showForm && (
         <div className="card p-3 my-3">
-          <input type="text" className="form-control mb-2" placeholder="Event Name" 
-            value={eventDetails.name} onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Event Location" 
-            value={eventDetails.location} onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })} />
-          <input type="date" className="form-control mb-2" 
-            value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Paste image address here" 
-            value={eventDetails.img} onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })} />
-            <Tooltip id="img-tip" place="right" content="Right-click an image on Unsplash, select 'Copy Image Address,' and paste here." />
-          <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Event Name"
+            value={eventDetails.name}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, name: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Event Location"
+            value={eventDetails.location}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, location: e.target.value })
+            }
+          />
+          <input
+            type="date"
+            className="form-control mb-2"
+            value={eventDetails.date}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, date: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Paste image address here"
+            value={eventDetails.img}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, img: e.target.value })
+            }
+            data-tooltip-id="img-tip"
+          />
+          <small className="text-muted">
+            For better image parsing, use a direct image address. Example:
+            Right-click an image on Unsplash, select 'Copy Image Address,' and
+            paste here.
+          </small>
+
+          <Tooltip id="img-tip" place="right">
+            Right-click an image on Unsplash, select 'Copy Image Address,' and
+            paste here.
+          </Tooltip>
+
+          <button
+            className="btn"
+            style={{ backgroundColor: "#FA5", color: "white" }}
+            onClick={addEvent}
+          >
             Submit Event
           </button>
         </div>
@@ -134,20 +192,36 @@ const EventsList = () => {
         {events.map((event) => (
           <div key={event._id} className="col-md-4 col-sm-6 mb-4">
             <div className="card shadow-sm">
-              <img src={event.img} alt={event.name} className="card-img-top" 
-                onError={(e) => (e.target.src = "https://via.placeholder.com/200")}
-                style={{ height: "200px", objectFit: "cover" }} />
+              <img
+                src={event.img}
+                alt={event.name}
+                className="card-img-top"
+                onError={(e) =>
+                  (e.target.src = "https://via.placeholder.com/200")
+                }
+                style={{ height: "200px", objectFit: "cover" }}
+              />
               <div className="card-body">
                 <h5 className="card-title">{event.name}</h5>
                 <p className="card-text">
                   📍 {event.location} <br />
-                  📅 {event.date ? new Date(event.date).toDateString() : "Date Not Available"} <br />
-                  👤 Posted by: {event.createdBy ? event.createdBy.name || "Unknown" : "Unknown"}
+                  📅{" "}
+                  {event.date
+                    ? new Date(event.date).toDateString()
+                    : "Date Not Available"}{" "}
+                  <br />
+                  👤 Posted by:{" "}
+                  {event.createdBy
+                    ? event.createdBy.name || "Unknown"
+                    : "Unknown"}
                 </p>
 
                 {event.createdBy?._id === userId && (
-                  <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} 
-                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}>
+                  <button
+                    className="btn"
+                    style={{ backgroundColor: "#FA5", color: "white" }}
+                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}
+                  >
                     Delete
                   </button>
                 )}
