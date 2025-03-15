@@ -60,7 +60,7 @@ const EventsList = () => {
       formData.append("image", image); // Append the selected file
       formData.append("createdBy", userId);
 
-      await axios.post(`${API_BASE_URL}/api/events`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/events`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -68,11 +68,40 @@ const EventsList = () => {
         withCredentials: true,
       });
 
-      localStorage.setItem("eventAdded", "Event added successfully!");
-      window.location.reload();
+      // Update state instead of reloading
+      setEvents([...events, response.data]);
+      toast.success("Event added successfully!");
+      setShowForm(false);
+      setEventDetails({ name: "", location: "", date: "" });
+      setImage(null);
     } catch (error) {
       console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add event. Try again later.");
+    }
+  };
+
+  // Delete Event
+  const deleteEvent = async (eventId) => {
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You must be logged in to delete an event.");
+        return;
+      }
+
+      await axios.delete(`${API_BASE_URL}/api/events/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
+
+      // Remove deleted event from UI
+      setEvents(events.filter((event) => event._id !== eventId));
+      toast.success("Event deleted successfully!");
+    } catch (error) {
+      console.error("❌ Error deleting event:", error.response?.data || error.message);
+      toast.error("Failed to delete event.");
     }
   };
 
@@ -92,14 +121,27 @@ const EventsList = () => {
 
       {showForm && (
         <div className="card p-3 my-3">
-          <input type="text" className="form-control mb-2" placeholder="Event Name"
-            value={eventDetails.name} onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Event Location"
-            value={eventDetails.location} onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })} />
-          <input type="date" className="form-control mb-2"
-            value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
-          <input type="file" className="form-control mb-2" accept="image/*" 
-            onChange={(e) => setImage(e.target.files[0])} />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Event Name"
+            value={eventDetails.name}
+            onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })}
+          />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Event Location"
+            value={eventDetails.location}
+            onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })}
+          />
+          <input
+            type="date"
+            className="form-control mb-2"
+            value={eventDetails.date}
+            onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })}
+          />
+          <input type="file" className="form-control mb-2" accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
 
           <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
             Submit Event
@@ -111,9 +153,13 @@ const EventsList = () => {
         {events.map((event) => (
           <div key={event._id} className="col-md-4 col-sm-6 mb-4">
             <div className="card shadow-sm">
-              <img src={event.img} alt={event.name} className="card-img-top" 
+              <img
+                src={event.img}
+                alt={event.name}
+                className="card-img-top"
                 onError={(e) => (e.target.src = "https://via.placeholder.com/200")}
-                style={{ height: "200px", objectFit: "cover" }} />
+                style={{ height: "200px", objectFit: "cover" }}
+              />
               <div className="card-body">
                 <h5 className="card-title">{event.name}</h5>
                 <p className="card-text">
@@ -123,8 +169,7 @@ const EventsList = () => {
                 </p>
 
                 {event.createdBy?._id === userId && (
-                  <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} 
-                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}>
+                  <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={() => deleteEvent(event._id)}>
                     Delete
                   </button>
                 )}
