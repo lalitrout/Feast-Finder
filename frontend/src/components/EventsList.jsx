@@ -31,13 +31,6 @@ const EventsList = () => {
 
   useEffect(() => {
     fetchEvents();
-
-    // Show notification after page reload
-    const eventMessage = localStorage.getItem("eventAdded");
-    if (eventMessage) {
-      toast.success(eventMessage);
-      localStorage.removeItem("eventAdded"); // Remove the message after displaying
-    }
   }, []);
 
   // Add Event
@@ -59,10 +52,7 @@ const EventsList = () => {
         { ...eventDetails, createdBy: userId },
         { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
-
-      // Store success message in localStorage before reloading
-      localStorage.setItem("eventAdded", "Event added successfully!");
-
+      toast.success("Event added");
       // Reload the page
       window.location.reload();
     } catch (error) {
