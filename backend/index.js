@@ -28,7 +28,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "event_images",
+    folder: "wanderlust_DEV",
     allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
