@@ -28,8 +28,9 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "wanderlust_DEV",
+    folder: "feastfinder_events", // Updated folder name
     allowed_formats: ["jpg", "png", "jpeg"],
+    transformation: [{ width: 800, height: 600, crop: "limit" }],
   },
 });
 
@@ -55,68 +56,51 @@ mongoose
   })
   .catch((err) => console.error("❌ DB Connection Error:", err));
 
-// ✅ **User Registration**
-app.post("/api/users", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ error: "User already exists" });
-
-    const newUser = new User({ name, email, password });
-    await newUser.save();
-
-    const token = jwt.sign({ userId: newUser._id, email: newUser.email }, SECRET_KEY, { expiresIn: "1h" });
-    res.status(201).json({ success: true, message: "User registered successfully!", token, userId: newUser._id });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to register user", details: error.message });
-  }
-});
-
-// ✅ **User Login**
-app.post("/api/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "User not found" });
-
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
-
-    const token = jwt.sign({ userId: user._id, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
-    res.json({ message: "Login successful", token, userId: user._id });
-  } catch (error) {
-    res.status(500).json({ error: "Login failed", details: error.message });
-  }
-});
-
-// ✅ **Fetch All Users (Protected)**
-app.get("/api/users", authMiddleware, async (req, res) => {
-  try {
-    const users = await User.find().select("-password");
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch users" });
-  }
-});
-
-// ✅ **Insert Event (Now Supports Image Upload)**
+// ✅ **Insert Event (Supports Image Upload)**
 app.post("/api/events", authMiddleware, upload.single("img"), async (req, res) => {
   try {
     const { name, location, date } = req.body;
-    const imageUrl = req.file ? req.file.path : ""; // Get Cloudinary URL
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Image upload failed!" });
+    }
 
     const newEvent = new EventInfo({
       name,
       location,
       date: new Date(date).toISOString(),
-      img: imageUrl,
+      img: {
+        url: req.file.path, // Cloudinary Image URL
+        public_id: req.file.filename, // Store Cloudinary Public ID
+      },
       createdBy: req.user.userId,
     });
 
     await newEvent.save();
-    res.status(201).json({ message: "Event added successfully!" });
+    res.status(201).json({ message: "Event added successfully!", event: newEvent });
   } catch (error) {
     res.status(500).json({ error: "Failed to add event", details: error.message });
+  }
+});
+
+// ✅ **Delete Event (Also Deletes Cloudinary Image)**
+app.delete("/api/events/:id", authMiddleware, async (req, res) => {
+  try {
+    const event = await EventInfo.findById(req.params.id);
+    if (!event) return res.status(404).json({ error: "Event not found" });
+
+    if (event.createdBy.toString() !== req.user.userId)
+      return res.status(403).json({ error: "Unauthorized to delete this event" });
+
+    // ✅ Delete Image from Cloudinary
+    if (event.img && event.img.public_id) {
+      await cloudinary.uploader.destroy(event.img.public_id);
+    }
+
+    await EventInfo.findByIdAndDelete(req.params.id);
+    res.json({ message: "Event deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete event", details: error.message });
   }
 });
 
@@ -127,25 +111,5 @@ app.get("/api/events", async (req, res) => {
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch events" });
-  }
-});
-
-// ✅ **Delete Event (Protected)**
-app.delete("/api/events/:id", authMiddleware, async (req, res) => {
-  try {
-    const event = await EventInfo.findById(req.params.id);
-    if (!event) return res.status(404).json({ error: "Event not found" });
-
-    if (event.createdBy.toString() !== req.user.userId)
-      return res.status(403).json({ error: "Unauthorized to delete this event" });
-
-    // Delete Image from Cloudinary
-    const imagePublicId = event.img.split("/").pop().split(".")[0];
-    await cloudinary.uploader.destroy(`event_images/${imagePublicId}`);
-
-    await EventInfo.findByIdAndDelete(req.params.id);
-    res.json({ message: "Event deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete event", details: error.message });
   }
 });
