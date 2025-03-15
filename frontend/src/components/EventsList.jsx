@@ -120,8 +120,9 @@ const EventsList = () => {
             value={eventDetails.location} onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })} />
           <input type="date" className="form-control mb-2" 
             value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Image URL" 
+          <input type="text" className="form-control mb-2" placeholder="Paste image address here" 
             value={eventDetails.img} onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })} />
+            <small>For best results, use a direct image address. Example: Right-click an image on Unsplash, select 'Copy Image Address,' and paste here.</small>
           <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
             Submit Event
           </button>
