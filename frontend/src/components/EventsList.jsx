@@ -13,8 +13,8 @@ const EventsList = () => {
     name: "",
     location: "",
     date: "",
-    img: "",
   });
+  const [image, setImage] = useState(null); // Store the selected file
 
   const userId = localStorage.getItem("userId") || "";
 
@@ -31,19 +31,17 @@ const EventsList = () => {
 
   useEffect(() => {
     fetchEvents();
-
-    // Show notification after page reload
     const eventMessage = localStorage.getItem("eventAdded");
     if (eventMessage) {
       toast.success(eventMessage);
-      localStorage.removeItem("eventAdded"); // Remove the message after displaying
+      localStorage.removeItem("eventAdded");
     }
   }, []);
 
   // Add Event
   const addEvent = async () => {
-    if (!eventDetails.name || !eventDetails.location || !eventDetails.date || !eventDetails.img) {
-      toast.warn("Please fill all fields.");
+    if (!eventDetails.name || !eventDetails.location || !eventDetails.date || !image) {
+      toast.warn("Please fill all fields and select an image.");
       return;
     }
 
@@ -54,47 +52,27 @@ const EventsList = () => {
         return;
       }
 
-      await axios.post(
-        `${API_BASE_URL}/api/events`,
-        { ...eventDetails, createdBy: userId },
-        { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
-      );
+      // Prepare FormData
+      const formData = new FormData();
+      formData.append("name", eventDetails.name);
+      formData.append("location", eventDetails.location);
+      formData.append("date", eventDetails.date);
+      formData.append("image", image); // Append the selected file
+      formData.append("createdBy", userId);
 
-      // Store success message in localStorage before reloading
+      await axios.post(`${API_BASE_URL}/api/events`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+
       localStorage.setItem("eventAdded", "Event added successfully!");
-
-      // Reload the page
       window.location.reload();
     } catch (error) {
       console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add event. Try again later.");
-    }
-  };
-
-  // Delete Event
-  const deleteEvent = async (id, ownerId) => {
-    if (ownerId !== userId) {
-      toast.warn("You can only delete your own events!");
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("You must be logged in to delete an event.");
-        return;
-      }
-
-      await axios.delete(`${API_BASE_URL}/api/events/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-
-      setEvents(events.filter((event) => event._id !== id));
-      toast.success("Event deleted successfully!");
-    } catch (error) {
-      console.error("❌ Error deleting event:", error.response?.data || error.message);
-      toast.error("Failed to delete event.");
     }
   };
 
@@ -114,14 +92,15 @@ const EventsList = () => {
 
       {showForm && (
         <div className="card p-3 my-3">
-          <input type="text" className="form-control mb-2" placeholder="Event Name" 
+          <input type="text" className="form-control mb-2" placeholder="Event Name"
             value={eventDetails.name} onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Event Location" 
+          <input type="text" className="form-control mb-2" placeholder="Event Location"
             value={eventDetails.location} onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })} />
-          <input type="date" className="form-control mb-2" 
+          <input type="date" className="form-control mb-2"
             value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Image URL" 
-            value={eventDetails.img} onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })} />
+          <input type="file" className="form-control mb-2" accept="image/*" 
+            onChange={(e) => setImage(e.target.files[0])} />
+
           <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
             Submit Event
           </button>
