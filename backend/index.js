@@ -81,11 +81,12 @@ app.get("/api/users", authMiddleware, async (req, res) => {
 // ✅ **Insert Event (Protected Route)**
 app.post("/api/events", authMiddleware, async (req, res) => {
     try {
-        const { name, location, date, img } = req.body;
+        const { name, location, date, img, contactInfo } = req.body;
         const newEvent = new EventInfo({
             name, location,
             date: new Date(date).toISOString(),
             img,
+            contactInfo, 
             createdBy: req.user.userId,
         });
         await newEvent.save();
