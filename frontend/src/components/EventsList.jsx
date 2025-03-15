@@ -21,7 +21,9 @@ const EventsList = () => {
   // Fetch Events
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/events`, { withCredentials: true });
+      const response = await axios.get(`${API_BASE_URL}/api/events`, {
+        withCredentials: true,
+      });
       setEvents(response.data);
     } catch (error) {
       toast.error("Error fetching events!");
@@ -113,17 +115,44 @@ const EventsList = () => {
       </div>
 
       {showForm && (
-        <div className="card p-3 my-3">
-          <input type="text" className="form-control mb-2" placeholder="Event Name" 
-            value={eventDetails.name} onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Event Location" 
-            value={eventDetails.location} onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })} />
-          <input type="date" className="form-control mb-2" 
-            value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Paste image address here" 
-            value={eventDetails.img} onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })} />
-            <small className="text-muted p-2" style={{ fontSize: "1.1rem" }}>For best results, use a direct image address. Example: Right-click an image on Unsplash, select 'Copy Image Address,' and paste here.</small>
-          <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
+        <div className="card p-4 my-3 shadow">
+          <input
+            type="text"
+            className="form-control p-3 mb-3"
+            placeholder="Event Name"
+            value={eventDetails.name}
+            onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })}
+          />
+          <input
+            type="text"
+            className="form-control p-3 mb-3"
+            placeholder="Event Location"
+            value={eventDetails.location}
+            onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })}
+          />
+          <input
+            type="date"
+            className="form-control p-3 mb-3"
+            value={eventDetails.date}
+            onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })}
+          />
+          <input
+            type="text"
+            className="form-control p-3 mb-3"
+            placeholder="Paste image address here"
+            value={eventDetails.img}
+            onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })}
+          />
+          <small className="text-muted d-block mb-3">
+            For best results, use a direct image address. Example: Right-click an image on Unsplash,
+            select 'Copy Image Address,' and paste here.
+          </small>
+
+          <button
+            className="btn w-100 p-2"
+            style={{ backgroundColor: "#FA5", color: "white" }}
+            onClick={addEvent}
+          >
             Submit Event
           </button>
         </div>
@@ -132,10 +161,17 @@ const EventsList = () => {
       <div className="row">
         {events.map((event) => (
           <div key={event._id} className="col-md-4 col-sm-6 mb-4">
-            <div className="card shadow-sm">
-              <img src={event.img} alt={event.name} className="card-img-top" 
-                onError={(e) => (e.target.src = "https://via.placeholder.com/200")}
-                style={{ height: "200px", objectFit: "cover" }} />
+            <div className="card shadow-sm p-3">
+              <img
+                src={event.img || "https://via.placeholder.com/200"}
+                alt={event.name}
+                className="card-img-top"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://via.placeholder.com/200";
+                }}
+                style={{ height: "200px", objectFit: "cover" }}
+              />
               <div className="card-body">
                 <h5 className="card-title">{event.name}</h5>
                 <p className="card-text">
@@ -145,8 +181,11 @@ const EventsList = () => {
                 </p>
 
                 {event.createdBy?._id === userId && (
-                  <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} 
-                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}>
+                  <button
+                    className="btn w-100 p-2"
+                    style={{ backgroundColor: "#FA5", color: "white" }}
+                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}
+                  >
                     Delete
                   </button>
                 )}
