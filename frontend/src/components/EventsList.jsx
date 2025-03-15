@@ -52,10 +52,9 @@ const EventsList = () => {
         { ...eventDetails, createdBy: userId },
         { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
-      toast.success("Event added");
       // Reload the page
       setTimeout(() => {
-        window.location.reload();
+        toast.success("Event added");
       }, 3000); // 2-second delay
     } catch (error) {
       console.error("❌ Error adding event:", error.response?.data || error.message);
