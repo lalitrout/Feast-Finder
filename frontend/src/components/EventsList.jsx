@@ -13,7 +13,8 @@ const EventsList = () => {
     name: "",
     location: "",
     date: "",
-    img: "",
+    img: "", // Optional
+    contactInfo: "", // Optional
   });
 
   const userId = localStorage.getItem("userId") || "";
@@ -35,8 +36,8 @@ const EventsList = () => {
 
   // Add Event
   const addEvent = async () => {
-    if (!eventDetails.name || !eventDetails.location || !eventDetails.date || !eventDetails.img) {
-      toast.warn("Please fill all fields.");
+    if (!eventDetails.name || !eventDetails.location || !eventDetails.date) {
+      toast.warn("Please fill in Name, Location, and Date.");
       return;
     }
 
@@ -53,10 +54,9 @@ const EventsList = () => {
         { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
       toast.success("Event added & refreshing...");
-      // Reload the page
       setTimeout(() => {
         window.location.reload();
-      }, 3000); // -second delay
+      }, 3000);
     } catch (error) {
       console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add event. Try again later.");
@@ -106,14 +106,40 @@ const EventsList = () => {
 
       {showForm && (
         <div className="card p-3 my-3">
-          <input type="text" className="form-control mb-2" placeholder="Event Name" 
-            value={eventDetails.name} onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Event Location" 
-            value={eventDetails.location} onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })} />
-          <input type="date" className="form-control mb-2" 
-            value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Image URL" 
-            value={eventDetails.img} onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })} />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Event Name"
+            value={eventDetails.name}
+            onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })}
+          />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Event Location"
+            value={eventDetails.location}
+            onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })}
+          />
+          <input
+            type="date"
+            className="form-control mb-2"
+            value={eventDetails.date}
+            onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })}
+          />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Image URL (Optional)"
+            value={eventDetails.img}
+            onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })}
+          />
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Contact Info (Optional)"
+            value={eventDetails.contactInfo}
+            onChange={(e) => setEventDetails({ ...eventDetails, contactInfo: e.target.value })}
+          />
           <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
             Submit Event
           </button>
@@ -124,20 +150,27 @@ const EventsList = () => {
         {events.map((event) => (
           <div key={event._id} className="col-md-4 col-sm-6 mb-4">
             <div className="card shadow-sm">
-              <img src={event.img} alt={event.name} className="card-img-top" 
-                onError={(e) => (e.target.src = "https://via.placeholder.com/200")}
-                style={{ height: "200px", objectFit: "cover" }} />
+              <img
+                src={event.img || "https://via.placeholder.com/200"} // ✅ If no image, use placeholder
+                alt={event.name}
+                className="card-img-top"
+                style={{ height: "200px", objectFit: "cover" }}
+              />
               <div className="card-body">
                 <h5 className="card-title">{event.name}</h5>
                 <p className="card-text">
                   📍 {event.location} <br />
                   📅 {event.date ? new Date(event.date).toDateString() : "Date Not Available"} <br />
+                  📞 {event.contactInfo || "Not Provided"} <br /> {/* ✅ If no contact, show "Not Provided" */}
                   👤 Posted by: {event.createdBy ? event.createdBy.name || "Unknown" : "Unknown"}
                 </p>
 
                 {event.createdBy?._id === userId && (
-                  <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} 
-                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}>
+                  <button
+                    className="btn"
+                    style={{ backgroundColor: "#FA5", color: "white" }}
+                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}
+                  >
                     Delete
                   </button>
                 )}

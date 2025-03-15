@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js"; 
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { Collapse } from "bootstrap";
 import "./Navbar.css";
 import { toast } from "react-toastify";
 import favicon from "./assets/favicon-32x32.png";
-import { Collapse } from "bootstrap"; // Import Bootstrap Collapse API
 
 function Navbar() {
   const navigate = useNavigate();
@@ -24,29 +24,45 @@ function Navbar() {
     };
   }, []);
 
-  // Function to close navbar after navigation
   const closeNavbar = () => {
     const navbar = document.getElementById("navbarNav");
-    if (navbar) {
+    if (navbar.classList.contains("show")) {
       const bsCollapse = new Collapse(navbar, { toggle: false });
       bsCollapse.hide();
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const navbar = document.getElementById("navbarNav");
+      const toggler = document.querySelector(".navbar-toggler");
+
+      if (navbar.classList.contains("show") && !navbar.contains(event.target) && !toggler.contains(event.target)) {
+        closeNavbar();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   const handleLogout = () => {
-    const lastPage = window.location.pathname; // ✅ Store the current page
+    const lastPage = window.location.pathname;
     localStorage.setItem("lastPage", lastPage);
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    
+
     toast.success("You have been logged out.", { autoClose: 2000 });
-  
+
     setTimeout(() => {
-      navigate(lastPage); // ✅ Redirect to last visited page
+      navigate(lastPage);
       window.location.reload();
     }, 2000);
   };
-  
+
   return (
     <>
       <nav className="navbar navbar-expand-lg border-bottom bg-white shadow-sm fixed-top">
@@ -62,31 +78,42 @@ function Navbar() {
 
           <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul className="navbar-nav">
-              <li className="nav-item"><Link className="nav-link custom-link" to="/" onClick={closeNavbar}>Home</Link></li>
-              <li className="nav-item"><Link className="nav-link custom-link" to="/about" onClick={closeNavbar}>About Us</Link></li>
-              <li className="nav-item"><Link className="nav-link custom-link" to="/eventslist" onClick={closeNavbar}>Event List</Link></li>
-
-              <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                  <span className="me-1"><i className="fa-solid fa-user"></i></span> Account
-                </a>
-                <ul className="dropdown-menu dropdown-menu-end">
-                  {!isLoggedIn ? (
-                    <>
-                      <li>
-                        <Link className="dropdown-item" to="/signup" onClick={() => { localStorage.setItem("lastPage", window.location.pathname); closeNavbar(); }}>Signup</Link>
-                      </li>
-                      <li>
-                        <Link className="dropdown-item" to="/login" onClick={() => { localStorage.setItem("lastPage", window.location.pathname); closeNavbar(); }}>Login</Link>
-                      </li>
-                    </>
-                  ) : (
-                    <li>
-                      <button className="dropdown-item" onClick={handleLogout}>Logout</button>
-                    </li>
-                  )}
-                </ul>
+              <li className="nav-item">
+                <Link className="nav-link custom-link" to="/" onClick={closeNavbar}>
+                  Home
+                </Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link custom-link" to="/about" onClick={closeNavbar}>
+                  About Us
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link custom-link" to="/eventslist" onClick={closeNavbar}>
+                  Event List
+                </Link>
+              </li>
+
+              {!isLoggedIn ? (
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link custom-link" to="/signup" onClick={closeNavbar}>
+                      Signup
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link custom-link" to="/login" onClick={closeNavbar}>
+                      Login
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item">
+                  <button className="nav-link custom-link btn btn-link" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </div>
