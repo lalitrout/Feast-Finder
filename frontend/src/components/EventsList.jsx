@@ -18,14 +18,12 @@ const EventsList = () => {
 
   const userId = localStorage.getItem("userId") || "";
 
-  // Fetch Events
   const fetchEvents = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/events`, { withCredentials: true });
       setEvents(response.data);
     } catch (error) {
       toast.error("Error fetching events!");
-      console.error("❌ Error fetching events:", error.response?.data || error.message);
     }
   };
 
@@ -33,7 +31,6 @@ const EventsList = () => {
     fetchEvents();
   }, []);
 
-  // Add Event
   const addEvent = async () => {
     if (!eventDetails.name || !eventDetails.location || !eventDetails.date || !eventDetails.img) {
       toast.warn("Please fill all fields.");
@@ -54,18 +51,15 @@ const EventsList = () => {
       );
 
       toast.success("Event added successfully!", {
-        onClose: () => setTimeout(() => window.location.reload(), 300), // Reload after toast closes
+        onClose: () => setTimeout(() => window.location.reload(), 300),
       });
 
       setEventDetails({ name: "", location: "", date: "", img: "" });
-
     } catch (error) {
-      console.error("❌ Error adding event:", error.response?.data || error.message);
-      toast.error("Failed to add event. Try again later.");
+      toast.error("Failed to add event.");
     }
   };
 
-  // Delete Event
   const deleteEvent = async (id, ownerId) => {
     if (ownerId !== userId) {
       toast.warn("You can only delete your own events!");
@@ -85,11 +79,9 @@ const EventsList = () => {
       });
 
       toast.success("Event deleted successfully!", {
-        onClose: () => setTimeout(() => window.location.reload(), 300), // Reload after toast closes
+        onClose: () => setTimeout(() => window.location.reload(), 300),
       });
-
     } catch (error) {
-      console.error("❌ Error deleting event:", error.response?.data || error.message);
       toast.error("Failed to delete event.");
     }
   };
@@ -98,45 +90,37 @@ const EventsList = () => {
     <div className="container py-5">
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className="d-flex mb-3">
-        <button
-          className="btn me-3"
-          style={{ backgroundColor: "#FA5", color: "white" }}
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? "- Form" : "+ Event"}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold text-dark">Events List</h2>
+        <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={() => setShowForm(!showForm)}>
+          {showForm ? "Hide Form" : "Add Event"}
         </button>
       </div>
 
       {showForm && (
-        <div className="card p-3 my-3">
-          <input type="text" className="form-control mb-2" placeholder="Event Name" 
+        <div className="card p-4 mb-4 shadow-sm border-0">
+          <input type="text" className="form-control mb-3" placeholder="Event Name" 
             value={eventDetails.name} onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Event Location" 
+          <input type="text" className="form-control mb-3" placeholder="Event Location" 
             value={eventDetails.location} onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })} />
-          <input type="date" className="form-control mb-2" 
+          <input type="date" className="form-control mb-3" 
             value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
-          <input type="text" className="form-control mb-2" placeholder="Paste image address here" 
+          <input type="text" className="form-control mb-3" placeholder="Paste image URL here" 
             value={eventDetails.img} onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })} />
-          <small className="text-muted p-2" style={{ fontSize: "0.8rem" }}>
-            For best results, use a direct image address. Example: Right-click an image on Unsplash, select 'Copy Image Address,' and paste here.
-          </small>
-          <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
-            Submit Event
-          </button>
+          <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>Submit Event</button>
         </div>
       )}
 
-      <div className="row">
+      <div className="row g-4">
         {events.map((event) => (
-          <div key={event._id} className="col-md-4 col-sm-6 mb-4">
-            <div className="card shadow-sm">
+          <div key={event._id} className="col-lg-4 col-md-6">
+            <div className="card shadow-sm border-0">
               <img src={event.img} alt={event.name} className="card-img-top" 
                 onError={(e) => (e.target.src = "https://via.placeholder.com/200")}
-                style={{ height: "200px", objectFit: "cover" }} />
+                style={{ height: "220px", objectFit: "cover" }} />
               <div className="card-body">
-                <h5 className="card-title">{event.name}</h5>
-                <p className="card-text">
+                <h5 className="card-title text-dark">{event.name}</h5>
+                <p className="card-text text-muted">
                   📍 {event.location} <br />
                   📅 {event.date ? new Date(event.date).toDateString() : "Date Not Available"} <br />
                   👤 Posted by: {event.createdBy ? event.createdBy.name || "Unknown" : "Unknown"}
