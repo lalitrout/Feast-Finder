@@ -3,6 +3,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Tooltip } from "react-tooltip";
 
 const API_BASE_URL = "https://feast-finder.onrender.com"; // Backend URL
 
@@ -122,7 +123,7 @@ const EventsList = () => {
             value={eventDetails.date} onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })} />
           <input type="text" className="form-control mb-2" placeholder="Paste image address here" 
             value={eventDetails.img} onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })} />
-            <small>For best results, use a direct image address. Example: Right-click an image on Unsplash, select 'Copy Image Address,' and paste here.</small>
+            <Tooltip id="img-tip" place="right" content="Right-click an image on Unsplash, select 'Copy Image Address,' and paste here." />
           <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
             Submit Event
           </button>
