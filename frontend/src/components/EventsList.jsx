@@ -3,8 +3,9 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaEllipsisV } from "react-icons/fa";
 
-const API_BASE_URL = "https://feast-finder.onrender.com"; // Backend URL
+const API_BASE_URL = "https://feast-finder.onrender.com";
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -15,6 +16,7 @@ const EventsList = () => {
     date: "",
     img: "",
   });
+  const [showDeleteOptions, setShowDeleteOptions] = useState(null);
 
   const userId = localStorage.getItem("userId") || "";
 
@@ -114,7 +116,17 @@ const EventsList = () => {
       <div className="row g-4">
         {events.map((event) => (
           <div key={event._id} className="col-lg-4 col-md-6">
-            <div className="card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div className="card shadow-lg border-0 rounded-4 overflow-hidden position-relative">
+              <div className="position-absolute top-0 end-0 p-2">
+                {event.createdBy?._id === userId && (
+                  <div className="dropdown">
+                    <FaEllipsisV role="button" onClick={() => setShowDeleteOptions(showDeleteOptions === event._id ? null : event._id)} />
+                    {showDeleteOptions === event._id && (
+                      <button className="btn btn-danger btn-sm mt-1" onClick={() => deleteEvent(event._id, event.createdBy?._id)}>Delete</button>
+                    )}
+                  </div>
+                )}
+              </div>
               <img src={event.img} alt={event.name} className="card-img-top" 
                 onError={(e) => (e.target.src = "https://via.placeholder.com/200")}
                 style={{ height: "220px", objectFit: "cover" }} />
@@ -125,12 +137,6 @@ const EventsList = () => {
                   📅 {event.date ? new Date(event.date).toDateString() : "Date Not Available"} <br />
                   👤 Posted by: {event.createdBy ? event.createdBy.name || "Unknown" : "Unknown"}
                 </p>
-                {event.createdBy?._id === userId && (
-                  <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} 
-                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}>
-                    Delete
-                  </button>
-                )}
               </div>
             </div>
           </div>
