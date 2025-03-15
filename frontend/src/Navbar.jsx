@@ -5,7 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./Navbar.css";
 import { toast } from "react-toastify";
 import favicon from "./assets/favicon-32x32.png";
-
+import { Collapse } from "bootstrap"; // Import Bootstrap Collapse API
 
 function Navbar() {
   const navigate = useNavigate();
@@ -23,6 +23,15 @@ function Navbar() {
       window.removeEventListener("storage", checkAuth);
     };
   }, []);
+
+  // Function to close navbar after navigation
+  const closeNavbar = () => {
+    const navbar = document.getElementById("navbarNav");
+    if (navbar) {
+      const bsCollapse = new Collapse(navbar, { toggle: false });
+      bsCollapse.hide();
+    }
+  };
 
   const handleLogout = () => {
     const lastPage = window.location.pathname; // ✅ Store the current page
@@ -42,7 +51,7 @@ function Navbar() {
     <>
       <nav className="navbar navbar-expand-lg border-bottom bg-white shadow-sm fixed-top">
         <div className="container-fluid">
-          <Link className="navbar-brand d-flex align-items-center" to="/">
+          <Link className="navbar-brand d-flex align-items-center" to="/" onClick={closeNavbar}>
             <img src={favicon} alt="FeastFinder Logo" width="40" height="40" className="me-2" />
             <span className="fw-bold fs-3 nav-head">FeastFinder</span>
           </Link>
@@ -53,9 +62,9 @@ function Navbar() {
 
           <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul className="navbar-nav">
-              <li className="nav-item"><Link className="nav-link custom-link" to="/">Home</Link></li>
-              <li className="nav-item"><Link className="nav-link custom-link" to="/about">About Us</Link></li>
-              <li className="nav-item"><Link className="nav-link custom-link" to="/eventslist">Event List</Link></li>
+              <li className="nav-item"><Link className="nav-link custom-link" to="/" onClick={closeNavbar}>Home</Link></li>
+              <li className="nav-item"><Link className="nav-link custom-link" to="/about" onClick={closeNavbar}>About Us</Link></li>
+              <li className="nav-item"><Link className="nav-link custom-link" to="/eventslist" onClick={closeNavbar}>Event List</Link></li>
 
               <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
@@ -65,10 +74,10 @@ function Navbar() {
                   {!isLoggedIn ? (
                     <>
                       <li>
-                        <Link className="dropdown-item" to="/signup" onClick={() => localStorage.setItem("lastPage", window.location.pathname)}>Signup</Link>
+                        <Link className="dropdown-item" to="/signup" onClick={() => { localStorage.setItem("lastPage", window.location.pathname); closeNavbar(); }}>Signup</Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item" to="/login" onClick={() => localStorage.setItem("lastPage", window.location.pathname)}>Login</Link>
+                        <Link className="dropdown-item" to="/login" onClick={() => { localStorage.setItem("lastPage", window.location.pathname); closeNavbar(); }}>Login</Link>
                       </li>
                     </>
                   ) : (
