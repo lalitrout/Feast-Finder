@@ -1,0 +1,35 @@
+{
+  "name": "FeastFinder",
+  "short_name": "FeastFinder",
+  "description": "Find free food events near you with FeastFinder!",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FA5",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/Screenshot 2025-03-16 021214.png",
+      "type": "image/png",
+      "sizes": "1280x800",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshots/Screenshot 2025-03-16 020722.png",
+      "type": "image/png",
+      "sizes": "750x1334"
+    }
+  ]
+}
