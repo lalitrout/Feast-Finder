@@ -31,16 +31,9 @@ const EventsList = () => {
 
   useEffect(() => {
     fetchEvents();
-
-    // Show notification after page reload
-    const eventMessage = localStorage.getItem("eventAdded");
-    if (eventMessage) {
-      toast.success(eventMessage);
-      localStorage.removeItem("eventAdded"); // Remove the message after displaying
-    }
   }, []);
 
-  // Add Event
+  // Add Event (Without Reloading)
   const addEvent = async () => {
     if (!eventDetails.name || !eventDetails.location || !eventDetails.date || !eventDetails.img) {
       toast.warn("Please fill all fields.");
@@ -54,17 +47,20 @@ const EventsList = () => {
         return;
       }
 
-      await axios.post(
+      const response = await axios.post(
         `${API_BASE_URL}/api/events`,
         { ...eventDetails, createdBy: userId },
         { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
 
-      // Store success message in localStorage before reloading
-      localStorage.setItem("eventAdded", "Event added successfully!");
+      // Update state directly instead of reloading
+      setEvents((prevEvents) => [...prevEvents, response.data]);
 
-      // Reload the page
-      window.location.reload();
+      toast.success("Event added successfully!");
+
+      // Clear the form
+      setEventDetails({ name: "", location: "", date: "", img: "" });
+
     } catch (error) {
       console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add event. Try again later.");
