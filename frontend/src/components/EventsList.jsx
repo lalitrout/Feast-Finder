@@ -54,7 +54,9 @@ const EventsList = () => {
       );
       toast.success("Event added");
       // Reload the page
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000); // 2-second delay
     } catch (error) {
       console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add event. Try again later.");
