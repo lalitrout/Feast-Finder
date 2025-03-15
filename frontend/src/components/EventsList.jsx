@@ -22,11 +22,16 @@ const EventsList = () => {
   // Fetch Events
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/events`, { withCredentials: true });
+      const response = await axios.get(`${API_BASE_URL}/api/events`, {
+        withCredentials: true,
+      });
       setEvents(response.data);
     } catch (error) {
       toast.error("Error fetching events!");
-      console.error("❌ Error fetching events:", error.response?.data || error.message);
+      console.error(
+        "❌ Error fetching events:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -58,7 +63,10 @@ const EventsList = () => {
         window.location.reload();
       }, 3000);
     } catch (error) {
-      console.error("❌ Error adding event:", error.response?.data || error.message);
+      console.error(
+        "❌ Error adding event:",
+        error.response?.data || error.message
+      );
       toast.error("Failed to add event. Try again later.");
     }
   };
@@ -85,7 +93,10 @@ const EventsList = () => {
       setEvents(events.filter((event) => event._id !== id));
       toast.success("Event deleted successfully!");
     } catch (error) {
-      console.error("❌ Error deleting event:", error.response?.data || error.message);
+      console.error(
+        "❌ Error deleting event:",
+        error.response?.data || error.message
+      );
       toast.error("Failed to delete event.");
     }
   };
@@ -111,36 +122,56 @@ const EventsList = () => {
             className="form-control mb-2"
             placeholder="Event Name"
             value={eventDetails.name}
-            onChange={(e) => setEventDetails({ ...eventDetails, name: e.target.value })}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, name: e.target.value })
+            }
           />
           <input
             type="text"
             className="form-control mb-2"
             placeholder="Event Location"
             value={eventDetails.location}
-            onChange={(e) => setEventDetails({ ...eventDetails, location: e.target.value })}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, location: e.target.value })
+            }
           />
           <input
             type="date"
             className="form-control mb-2"
             value={eventDetails.date}
-            onChange={(e) => setEventDetails({ ...eventDetails, date: e.target.value })}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, date: e.target.value })
+            }
           />
           <input
             type="text"
             className="form-control mb-2"
-            placeholder="Image URL (Optional)"
+            placeholder="Paste image address here (Optional)"
             value={eventDetails.img}
-            onChange={(e) => setEventDetails({ ...eventDetails, img: e.target.value })}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, img: e.target.value })
+            }
           />
+          <small className="text-muted" style={{ fontSize: "0.8rem" }}>
+            {" "}
+            <pre> For better image parsing, use a direct image address above. Example:
+            Right-click an image on Unsplash, select 'Copy Image Address,' and
+            paste here.</pre>
+          </small>
           <input
             type="text"
             className="form-control mb-2"
             placeholder="Contact Info (Optional)"
             value={eventDetails.contactInfo}
-            onChange={(e) => setEventDetails({ ...eventDetails, contactInfo: e.target.value })}
+            onChange={(e) =>
+              setEventDetails({ ...eventDetails, contactInfo: e.target.value })
+            }
           />
-          <button className="btn" style={{ backgroundColor: "#FA5", color: "white" }} onClick={addEvent}>
+          <button
+            className="btn"
+            style={{ backgroundColor: "#FA5", color: "white" }}
+            onClick={addEvent}
+          >
             Submit Event
           </button>
         </div>
@@ -160,9 +191,17 @@ const EventsList = () => {
                 <h5 className="card-title">{event.name}</h5>
                 <p className="card-text">
                   📍 {event.location} <br />
-                  📅 {event.date ? new Date(event.date).toDateString() : "Date Not Available"} <br />
-                  📞 {event.contactInfo || "Not Provided"} <br /> {/* ✅ If no contact, show "Not Provided" */}
-                  👤 Posted by: {event.createdBy ? event.createdBy.name || "Unknown" : "Unknown"}
+                  📅{" "}
+                  {event.date
+                    ? new Date(event.date).toDateString()
+                    : "Date Not Available"}{" "}
+                  <br />
+                  📞 {event.contactInfo || "Not Provided"} <br />{" "}
+                  {/* ✅ If no contact, show "Not Provided" */}
+                  👤 Posted by:{" "}
+                  {event.createdBy
+                    ? event.createdBy.name || "Unknown"
+                    : "Unknown"}
                 </p>
 
                 {event.createdBy?._id === userId && (
