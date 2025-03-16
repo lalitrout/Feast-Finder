@@ -14,28 +14,28 @@ const Footer = () => {
         <h5>Follow Us</h5>
         <div className="d-flex justify-content-center gap-3 mt-3">
           <a
-            href="#"
+            href="https://www.instagram.com/"
             className="fs-4 text-decoration-none"
             style={{ color: "#FA5" }}
           >
             <i className="fab fa-instagram"></i>
           </a>
           <a
-            href="#"
+            href="https://www.facebook.com/"
             className="fs-4 text-decoration-none"
             style={{ color: "#FA5" }}
           >
             <i className="fab fa-facebook"></i>
           </a>
           <a
-            href="#"
+            href="https://x.com/"
             className="fs-4 text-decoration-none"
             style={{ color: "#FA5" }}
           >
             <i className="fab fa-twitter"></i>
           </a>
           <a
-            href="#"
+            href="https://www.linkedin.com/"
             className="fs-4 text-decoration-none"
             style={{ color: "#FA5" }}
           >

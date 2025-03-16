@@ -9,7 +9,7 @@ const API_BASE_URL = "https://feast-finder.onrender.com"; // Backend URL
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // ✅ Loading state
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const [eventDetails, setEventDetails] = useState({
     name: "",
     location: "",
