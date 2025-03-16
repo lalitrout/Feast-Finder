@@ -156,9 +156,12 @@ const EventsList = () => {
           />
           <small className="text-muted" style={{ fontSize: "0.8rem" }}>
             {" "}
-            <pre> For better image parsing, use a direct image address above. Example:
-            Right-click an image on Unsplash, select 'Copy Image Address,' and
-            paste here.</pre>
+            <pre>
+              {" "}
+              For better image parsing, use a direct image address above.
+              Example: Right-click an image on Unsplash, select 'Copy Image
+              Address,' and paste here.
+            </pre>
           </small>
           <input
             type="text"
@@ -179,50 +182,58 @@ const EventsList = () => {
         </div>
       )}
 
-     {loading ? (
-        <p className="text-center">Loading events...</p>
+      {loading ? (
+        <p className="text-center">
+          🍽️ Grabbing the feast details… Don't let your stomach growl just yet!
+          😋
+        </p>
       ) : (
-      <div className="row">
-        {events.map((event) => (
-          <div key={event._id} className="col-md-4 col-sm-6 mb-4">
-            <div className="card shadow-sm">
-              <img
-                src={event.img || "https://via.placeholder.com/200"} // ✅ If no image, use placeholder
-                alt={event.name}
-                className="card-img-top"
-                style={{ height: "200px", objectFit: "cover" }}
-              />
-              <div className="card-body">
-                <h5 className="card-title">{event.name}</h5>
-                <p className="card-text">
-                  📍 {event.location} <br />
-                  📅{" "}
-                  {event.date
-                    ? new Date(event.date).toDateString()
-                    : "Date Not Available"}{" "}
-                  <br />
-                  📞 {event.contactInfo || "Not Provided"} <br />{" "}
-                  {/* ✅ If no contact, show "Not Provided" */}
-                  👤 Posted by:{" "}
-                  {event.createdBy
-                    ? event.createdBy.name || "Unknown"
-                    : "Unknown"}
-                </p>
+        <div className="row">
+          {events.map((event) => (
+            <div key={event._id} className="col-md-4 col-sm-6 mb-4">
+              <div className="card shadow-sm">
+                <img
+                  src={
+                    event.img ||
+                    "https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  } // ✅ If no image, use placeholder
+                  alt={event.name}
+                  className="card-img-top"
+                  style={{ height: "200px", objectFit: "cover" }}
+                />
+                <div className="card-body">
+                  <h5 className="card-title">{event.name}</h5>
+                  <p className="card-text">
+                    📍 {event.location} <br />
+                    📅{" "}
+                    {event.date
+                      ? new Date(event.date).toDateString()
+                      : "Date Not Available"}{" "}
+                    <br />
+                    📞 {event.contactInfo || "Not Provided"} <br />{" "}
+                    {/* ✅ If no contact, show "Not Provided" */}
+                    👤 Posted by:{" "}
+                    {event.createdBy
+                      ? event.createdBy.name || "Unknown"
+                      : "Unknown"}
+                  </p>
 
-                {event.createdBy?._id === userId && (
-                  <button
-                    className="btn"
-                    style={{ backgroundColor: "#FA5", color: "white" }}
-                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}
-                  >
-                    Delete
-                  </button>
-                )}
+                  {event.createdBy?._id === userId && (
+                    <button
+                      className="btn"
+                      style={{ backgroundColor: "#FA5", color: "white" }}
+                      onClick={() =>
+                        deleteEvent(event._id, event.createdBy?._id)
+                      }
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       )}
     </div>
   );
