@@ -122,7 +122,7 @@ const EventsList = () => {
 
       {/* ✅ Show loading message while fetching */}
       {isLoading ? (
-        <p className="text-center my-4">⏳ Page is loading... Just a minute!</p>
+        <p className="text-center my-4">🍽️ Grabbing the feast details… Don't let your stomach growl just yet! 😋</p>
       ) : (
         <div className="row">
           {events.map((event) => (
