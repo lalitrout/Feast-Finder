@@ -9,6 +9,7 @@ const API_BASE_URL = "https://feast-finder.onrender.com"; // Backend URL
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [eventDetails, setEventDetails] = useState({
     name: "",
     location: "",
@@ -32,6 +33,8 @@ const EventsList = () => {
         "❌ Error fetching events:",
         error.response?.data || error.message
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,7 +107,6 @@ const EventsList = () => {
   return (
     <div className="container py-5">
       <ToastContainer position="top-right" autoClose={3000} />
-
       <div className="d-flex mb-3">
         <button
           className="btn me-3"
@@ -177,6 +179,9 @@ const EventsList = () => {
         </div>
       )}
 
+     {loading ? (
+        <p className="text-center">Loading events...</p>
+      ) : (
       <div className="row">
         {events.map((event) => (
           <div key={event._id} className="col-md-4 col-sm-6 mb-4">
@@ -218,6 +223,7 @@ const EventsList = () => {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 };
