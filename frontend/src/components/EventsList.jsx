@@ -43,6 +43,35 @@ const EventsList = () => {
     fetchEvents();
   }, []);
 
+  // Function to add an event
+  const addEvent = async () => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/events`,
+        eventDetails,
+        {
+          withCredentials: true,
+        }
+      );
+      toast.success("Event added successfully!");
+      setEvents([...events, response.data]); // Update state with new event
+      setEventDetails({
+        name: "",
+        location: "",
+        date: "",
+        img: "",
+        contactInfo: "",
+      });
+      setShowForm(false); // Hide form after submission
+    } catch (error) {
+      toast.error("Failed to add event!");
+      console.error(
+        "❌ Error adding event:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   return (
     <div className="container py-5">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -122,14 +151,20 @@ const EventsList = () => {
 
       {/* ✅ Show loading message while fetching */}
       {isLoading ? (
-        <p className="text-center my-4">🍽️ Grabbing the feast details… Don't let your stomach growl just yet! 😋</p>
+        <p className="text-center my-4">
+          🍽️ Grabbing the feast details… Don't let your stomach growl just yet!
+          😋
+        </p>
       ) : (
         <div className="row">
           {events.map((event) => (
             <div key={event._id} className="col-md-4 col-sm-6 mb-4">
               <div className="card shadow-sm">
                 <img
-                  src={event.img || "https://via.placeholder.com/200"} // ✅ If no image, use placeholder
+                  src={
+                    event.img ||
+                    "https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  } // ✅ If no image, use placeholder
                   alt={event.name}
                   className="card-img-top"
                   style={{ height: "200px", objectFit: "cover" }}
@@ -155,7 +190,9 @@ const EventsList = () => {
                     <button
                       className="btn"
                       style={{ backgroundColor: "#FA5", color: "white" }}
-                      onClick={() => deleteEvent(event._id, event.createdBy?._id)}
+                      onClick={() =>
+                        deleteEvent(event._id, event.createdBy?._id)
+                      }
                     >
                       Delete
                     </button>
