@@ -9,6 +9,7 @@ const API_BASE_URL = "https://feast-finder.onrender.com"; // Backend URL
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // ✅ Loading state
   const [eventDetails, setEventDetails] = useState({
     name: "",
     location: "",
@@ -22,6 +23,7 @@ const EventsList = () => {
   // Fetch Events
   const fetchEvents = async () => {
     try {
+      setIsLoading(true); // ✅ Start loading
       const response = await axios.get(`${API_BASE_URL}/api/events`, {
         withCredentials: true,
       });
@@ -32,74 +34,14 @@ const EventsList = () => {
         "❌ Error fetching events:",
         error.response?.data || error.message
       );
+    } finally {
+      setIsLoading(false); // ✅ Stop loading
     }
   };
 
   useEffect(() => {
     fetchEvents();
   }, []);
-
-  // Add Event
-  const addEvent = async () => {
-    if (!eventDetails.name || !eventDetails.location || !eventDetails.date) {
-      toast.warn("Please fill in Name, Location, and Date.");
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("You must be logged in to add an event.");
-        return;
-      }
-
-      await axios.post(
-        `${API_BASE_URL}/api/events`,
-        { ...eventDetails, createdBy: userId },
-        { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
-      );
-      toast.success("Event added & refreshing...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
-    } catch (error) {
-      console.error(
-        "❌ Error adding event:",
-        error.response?.data || error.message
-      );
-      toast.error("Failed to add event. Try again later.");
-    }
-  };
-
-  // Delete Event
-  const deleteEvent = async (id, ownerId) => {
-    if (ownerId !== userId) {
-      toast.warn("You can only delete your own events!");
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("You must be logged in to delete an event.");
-        return;
-      }
-
-      await axios.delete(`${API_BASE_URL}/api/events/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-
-      setEvents(events.filter((event) => event._id !== id));
-      toast.success("Event deleted successfully!");
-    } catch (error) {
-      console.error(
-        "❌ Error deleting event:",
-        error.response?.data || error.message
-      );
-      toast.error("Failed to delete event.");
-    }
-  };
 
   return (
     <div className="container py-5">
@@ -153,10 +95,11 @@ const EventsList = () => {
             }
           />
           <small className="text-muted" style={{ fontSize: "0.8rem" }}>
-            {" "}
-            <pre> For better image parsing, use a direct image address above. Example:
-            Right-click an image on Unsplash, select 'Copy Image Address,' and
-            paste here.</pre>
+            <pre>
+              For better image parsing, use a direct image address above.
+              Example: Right-click an image on Unsplash, select 'Copy Image
+              Address,' and paste here.
+            </pre>
           </small>
           <input
             type="text"
@@ -177,47 +120,52 @@ const EventsList = () => {
         </div>
       )}
 
-      <div className="row">
-        {events.map((event) => (
-          <div key={event._id} className="col-md-4 col-sm-6 mb-4">
-            <div className="card shadow-sm">
-              <img
-                src={event.img || "https://via.placeholder.com/200"} // ✅ If no image, use placeholder
-                alt={event.name}
-                className="card-img-top"
-                style={{ height: "200px", objectFit: "cover" }}
-              />
-              <div className="card-body">
-                <h5 className="card-title">{event.name}</h5>
-                <p className="card-text">
-                  📍 {event.location} <br />
-                  📅{" "}
-                  {event.date
-                    ? new Date(event.date).toDateString()
-                    : "Date Not Available"}{" "}
-                  <br />
-                  📞 {event.contactInfo || "Not Provided"} <br />{" "}
-                  {/* ✅ If no contact, show "Not Provided" */}
-                  👤 Posted by:{" "}
-                  {event.createdBy
-                    ? event.createdBy.name || "Unknown"
-                    : "Unknown"}
-                </p>
+      {/* ✅ Show loading message while fetching */}
+      {isLoading ? (
+        <p className="text-center my-4">⏳ Page is loading... Just a minute!</p>
+      ) : (
+        <div className="row">
+          {events.map((event) => (
+            <div key={event._id} className="col-md-4 col-sm-6 mb-4">
+              <div className="card shadow-sm">
+                <img
+                  src={event.img || "https://via.placeholder.com/200"} // ✅ If no image, use placeholder
+                  alt={event.name}
+                  className="card-img-top"
+                  style={{ height: "200px", objectFit: "cover" }}
+                />
+                <div className="card-body">
+                  <h5 className="card-title">{event.name}</h5>
+                  <p className="card-text">
+                    📍 {event.location} <br />
+                    📅{" "}
+                    {event.date
+                      ? new Date(event.date).toDateString()
+                      : "Date Not Available"}{" "}
+                    <br />
+                    📞 {event.contactInfo || "Not Provided"} <br />{" "}
+                    {/* ✅ If no contact, show "Not Provided" */}
+                    👤 Posted by:{" "}
+                    {event.createdBy
+                      ? event.createdBy.name || "Unknown"
+                      : "Unknown"}
+                  </p>
 
-                {event.createdBy?._id === userId && (
-                  <button
-                    className="btn"
-                    style={{ backgroundColor: "#FA5", color: "white" }}
-                    onClick={() => deleteEvent(event._id, event.createdBy?._id)}
-                  >
-                    Delete
-                  </button>
-                )}
+                  {event.createdBy?._id === userId && (
+                    <button
+                      className="btn"
+                      style={{ backgroundColor: "#FA5", color: "white" }}
+                      onClick={() => deleteEvent(event._id, event.createdBy?._id)}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
