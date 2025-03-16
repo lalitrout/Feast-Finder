@@ -70,7 +70,7 @@ const EventsList = () => {
         "❌ Error adding event:",
         error.response?.data || error.message
       );
-      toast.error("Failed to add event. Try again later.");
+      toast.error("Failed to add. Try logging out and logging in again.");
     }
   };
 
@@ -159,8 +159,8 @@ const EventsList = () => {
             <pre>
               {" "}
               For better image parsing, use a direct image address above.
-              Example: Right-click an image on Unsplash, select 'Copy Image
-              Address,' and paste here.
+              Example: Right-click on any relevant image from Unsplash.com, select 'Copy Image
+              Address,' and paste here or you can skip it.
             </pre>
           </small>
           <input
