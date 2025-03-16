@@ -12,6 +12,9 @@ function Home() {
             buffet awaits—no invitation needed! Just confidence, a good
             appetite, and maybe a backup story if someone asks, ‘Who are you
             again?’”
+            <br />
+            <a href="/signup" style={{textDecoration:"none", color: " #FA5"}}>Do signup &rarr;</a>
+            <a href="/eventslist" style={{textDecoration:"none", color: " #FA5", marginLeft: "10px"}}>Upcoming events &rarr;</a>
           </p>
         </div>
         <div className="col-1"></div>
@@ -33,6 +36,8 @@ function Home() {
             wonder—share it! Post the event details, and let fellow foodies
             unite. After all, nothing brings people together like free paneer
             butter masala.”
+            <br />
+            <a href="/eventslist" style={{textDecoration:"none", color: " #FA5",}}>Explore upcoming events &rarr;</a>
           </p>
         </div>
         <div className="col-lg-5 col-sm-12" style={{ marginTop: "9rem" }}>
@@ -42,6 +47,8 @@ function Home() {
             caught—just opportunities. If an uncle at the wedding asks how you
             know the groom, we suggest ‘distant cousin’ or ‘friend from college’
             (even if the groom is 50).”
+            <br />
+            <a href="/about" style={{textDecoration:"none", color: " #FA5",}}>About us and our message &rarr;</a>
           </p>
         </div>
         <div className="col-1"></div>
