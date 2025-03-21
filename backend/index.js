@@ -16,7 +16,7 @@ const url = process.env.MONGO_URL;
 
 // ✅ Middleware
 const corsOptions = {
-    origin: "https://frontend-sigma-five-47.vercel.app", // Update with your frontend URL
+    origin: "https://feast-finder-rho.vercel.app", // Update with your frontend URL
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // Required for cookies/tokens
