@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const API_BASE_URL = "https://feast-finder.onrender.com"; // Backend URL
+const API_BASE_URL = "https://feast-finder.onrender.com";
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -42,38 +42,50 @@ const EventsList = () => {
     fetchEvents();
   }, []);
 
-  // Add Event
   const addEvent = async () => {
     if (!eventDetails.name || !eventDetails.location || !eventDetails.date) {
       toast.warn("Please fill in Name, Location, and Date.");
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         toast.error("You must be logged in to add an event.");
         return;
       }
-
+  
+      // Create a FormData object
+      const formData = new FormData();
+      formData.append("name", eventDetails.name);
+      formData.append("location", eventDetails.location);
+      formData.append("date", eventDetails.date);
+      formData.append("contactInfo", eventDetails.contactInfo || "");
+      
+      // Append the file if it's selected
+      if (eventDetails.img) {
+        formData.append("img", eventDetails.img);
+      }
+  
+      // Include the userId in the form data
+      formData.append("createdBy", userId);
+  
       await axios.post(
         `${API_BASE_URL}/api/events`,
-        { ...eventDetails, createdBy: userId },
+        formData,
         { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
+  
       toast.success("Event added & refreshing...");
       setTimeout(() => {
         window.location.reload();
       }, 3000);
     } catch (error) {
-      console.error(
-        "❌ Error adding event:",
-        error.response?.data || error.message
-      );
+      console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add. Try logging out and logging in again.");
     }
   };
-
+  
   // Delete Event
   const deleteEvent = async (id, ownerId) => {
     if (ownerId !== userId) {
@@ -145,24 +157,15 @@ const EventsList = () => {
               setEventDetails({ ...eventDetails, date: e.target.value })
             }
           />
+
           <input
-            type="text"
+            type="file"
             className="form-control mb-2"
-            placeholder="Paste image address here (Optional)"
-            value={eventDetails.img}
+            accept="image/*"
             onChange={(e) =>
-              setEventDetails({ ...eventDetails, img: e.target.value })
+              setEventDetails({ ...eventDetails, img: e.target.files[0] })
             }
           />
-          <small className="text-muted" style={{ fontSize: "0.8rem" }}>
-            {" "}
-            <pre>
-              {" "}
-              For better image parsing, use a direct image address above.
-              Example: Right-click on any relevant image from Unsplash.com, select 'Copy Image
-              Address,' and paste here or you can skip it.
-            </pre>
-          </small>
           <input
             type="text"
             className="form-control mb-2"
@@ -184,8 +187,7 @@ const EventsList = () => {
 
       {loading ? (
         <p className="text-center">
-          🍽️ Grabbing the feast details… Don't let your stomach growl just yet!
-          😋
+          🍽️ Grabbing the feast details😋… this could take a minute!
         </p>
       ) : (
         <div className="row">
