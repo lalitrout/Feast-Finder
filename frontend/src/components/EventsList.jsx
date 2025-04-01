@@ -152,6 +152,7 @@ const EventsList = () => {
           <input
             type="date"
             className="form-control mb-2"
+            placeholder="Valid Date"
             value={eventDetails.date}
             onChange={(e) =>
               setEventDetails({ ...eventDetails, date: e.target.value })
