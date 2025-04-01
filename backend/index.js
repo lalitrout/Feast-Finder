@@ -2,8 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-require("dotenv").config();
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+require("dotenv").config();
 
 const SECRET_KEY = process.env.JWT_SECRET || "yourSecretKey";
 const EventInfo = require("./models/EventInfo");
@@ -14,18 +16,32 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const url = process.env.MONGO_URL;
 
-// ✅ Middleware
-const corsOptions = {
-    origin: "https://feast-finder-rho.vercel.app", // Update with your frontend URL
+// Cloudinary configuration
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const allowedOrigins = [
+    "http://localhost:5173", // Local frontend
+    "https://feast-finder-rho.vercel.app" // Deployed frontend
+];
+
+// Middleware
+app.use(cors({
+    origin: allowedOrigins,
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // Required for cookies/tokens
-};
-
-app.use(cors(corsOptions));
+    credentials: true,
+}));
 app.use(bodyParser.json());
 
-// ✅ Connect to MongoDB
+// Multer configuration (memory storage for Cloudinary)
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+// Connect to MongoDB
 mongoose.connect(url)
     .then(() => {
         console.log("✅ Connected to DB");
@@ -33,14 +49,13 @@ mongoose.connect(url)
     })
     .catch(err => console.error("❌ DB Connection Error:", err));
 
-// ✅ **User Registration (Signup)**
+// User Registration
 app.post("/api/users", async (req, res) => {
     try {
         const { name, email, password } = req.body;
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ error: "User already exists" });
 
-        // No need to hash here, Mongoose middleware will handle it
         const newUser = new User({ name, email, password });
         await newUser.save();
 
@@ -51,7 +66,7 @@ app.post("/api/users", async (req, res) => {
     }
 });
 
-// ✅ **User Login**
+// User Login
 app.post("/api/login", async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -68,7 +83,7 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
-// ✅ **Fetch All Users (Protected Route)**
+// Fetch All Users (Protected Route)
 app.get("/api/users", authMiddleware, async (req, res) => {
     try {
         const users = await User.find().select("-password");
@@ -78,25 +93,39 @@ app.get("/api/users", authMiddleware, async (req, res) => {
     }
 });
 
-// ✅ **Insert Event (Protected Route)**
-app.post("/api/events", authMiddleware, async (req, res) => {
+// Insert Event with Cloudinary Upload
+app.post("/api/events", authMiddleware, upload.single("img"), async (req, res) => {
     try {
-        const { name, location, date, img, contactInfo } = req.body;
-        const newEvent = new EventInfo({
-            name, location,
-            date: new Date(date).toISOString(),
-            img,
-            contactInfo, 
-            createdBy: req.user.userId,
-        });
-        await newEvent.save();
-        res.status(201).json({ message: "Event added successfully!" });
+        const { name, location, date, contactInfo } = req.body;
+
+        if (!req.file) return res.status(400).json({ error: "Image file is required" });
+
+        // Upload image to Cloudinary
+        cloudinary.uploader.upload_stream(
+            { folder: "event_images" },
+            async (error, result) => {
+                if (error) return res.status(500).json({ error: "Cloudinary upload failed", details: error.message });
+
+                const newEvent = new EventInfo({
+                    name,
+                    location,
+                    date: new Date(date).toISOString(),
+                    img: result.secure_url, // Cloudinary image URL
+                    contactInfo,
+                    createdBy: req.user.userId,
+                });
+                console.log(newEvent);
+
+                await newEvent.save();
+                res.status(201).json({ message: "Event added successfully!", event: newEvent });
+            }
+        ).end(req.file.buffer);
     } catch (error) {
         res.status(500).json({ error: "Failed to add event", details: error.message });
     }
 });
 
-// ✅ **Fetch All Events**
+// Fetch All Events
 app.get("/api/events", async (req, res) => {
     try {
         const events = await EventInfo.find().populate("createdBy", "name email");
@@ -106,7 +135,7 @@ app.get("/api/events", async (req, res) => {
     }
 });
 
-// ✅ **Delete Event (Protected Route)**
+// Delete Event (Protected Route)
 app.delete("/api/events/:id", authMiddleware, async (req, res) => {
     try {
         const event = await EventInfo.findById(req.params.id);
