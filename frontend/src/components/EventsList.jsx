@@ -10,13 +10,12 @@ const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state
   const [eventDetails, setEventDetails] = useState({
     name: "",
     location: "",
     date: "",
-    img: "",
-    contactInfo: "",
+    img: "", // Optional
+    contactInfo: "", // Optional
   });
 
   const userId = localStorage.getItem("userId") || "";
@@ -48,35 +47,35 @@ const EventsList = () => {
       toast.warn("Please fill in Name, Location, and Date.");
       return;
     }
-
-    setIsSubmitting(true); // Disable button and show "Adding..."
-
+  
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         toast.error("You must be logged in to add an event.");
-        setIsSubmitting(false);
         return;
       }
-
+  
+      // Create a FormData object
       const formData = new FormData();
       formData.append("name", eventDetails.name);
       formData.append("location", eventDetails.location);
       formData.append("date", eventDetails.date);
       formData.append("contactInfo", eventDetails.contactInfo || "");
-
+      
+      // Append the file if it's selected
       if (eventDetails.img) {
         formData.append("img", eventDetails.img);
       }
-
+  
+      // Include the userId in the form data
       formData.append("createdBy", userId);
-
+  
       await axios.post(
         `${API_BASE_URL}/api/events`,
         formData,
         { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
-
+  
       toast.success("Event added & refreshing...");
       setTimeout(() => {
         window.location.reload();
@@ -84,11 +83,9 @@ const EventsList = () => {
     } catch (error) {
       console.error("❌ Error adding event:", error.response?.data || error.message);
       toast.error("Failed to add. Try logging out and logging in again.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
-
+  
   // Delete Event
   const deleteEvent = async (id, ownerId) => {
     if (ownerId !== userId) {
@@ -183,9 +180,8 @@ const EventsList = () => {
             className="btn"
             style={{ backgroundColor: "#FA5", color: "white" }}
             onClick={addEvent}
-            disabled={isSubmitting} // Disable button during submission
           >
-            {isSubmitting ? "Adding..." : "Add Event"}
+            Submit Event
           </button>
         </div>
       )}
@@ -218,6 +214,7 @@ const EventsList = () => {
                       : "Date Not Available"}{" "}
                     <br />
                     📞 {event.contactInfo || "Not Provided"} <br />{" "}
+                    {/* ✅ If no contact, show "Not Provided" */}
                     👤 Posted by:{" "}
                     {event.createdBy
                       ? event.createdBy.name || "Unknown"
