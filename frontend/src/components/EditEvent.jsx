@@ -22,7 +22,7 @@ const EditEvent = () => {
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/events/${id}`);
+                const response = await axios.get(`https://feast-finder.onrender.com/api/events/${id}`);
                 const event = response.data;
                 setEventData({
                     name: event.name,
@@ -72,7 +72,7 @@ const EditEvent = () => {
         }
       
         try {
-          await axios.put(`http://localhost:3001/api/events/${id}`, formData, {
+          await axios.put(`https://feast-finder.onrender.com/api/events/${id}`, formData, {
             headers: {
               Authorization: `Bearer ${token}`,  // 🔹 Ensure token is included
               "Content-Type": "multipart/form-data",
