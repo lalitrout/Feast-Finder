@@ -208,44 +208,49 @@ app.put(
   upload.single("img"),
   async (req, res) => {
     try {
+      const { name, location, date, contactInfo } = req.body;
       const event = await EventInfo.findById(req.params.id);
+
       if (!event) return res.status(404).json({ error: "Event not found" });
 
       if (event.createdBy.toString() !== req.user.userId)
         return res
           .status(403)
-          .json({ error: "Unauthorized to edit this event" });
+          .json({ error: "Unauthorized to update this event" });
 
-      const { name, location, date, contactInfo } = req.body;
-      let updatedImg = event.img; // Keep existing image if no new image is uploaded
-
+      // If a new image is uploaded
       if (req.file) {
-        // Upload new image to Cloudinary
-        const uploadResult = await cloudinary.uploader
+        cloudinary.uploader
           .upload_stream({ folder: "event_images" }, async (error, result) => {
-            if (error)
+            if (error) {
               return res
                 .status(500)
-                .json({ error: "Cloudinary upload failed" });
-            updatedImg = result.secure_url;
+                .json({ error: "Image upload failed", details: error.message });
+            }
+
+            // Update with new image
+            event.img = result.secure_url;
+            event.name = name;
+            event.location = location;
+            event.date = new Date(date).toISOString();
+            event.contactInfo = contactInfo;
+
+            await event.save();
+            return res.json({ message: "Event updated successfully", event });
           })
           .end(req.file.buffer);
+      } else {
+        // Update without changing image
+        event.name = name;
+        event.location = location;
+        event.date = new Date(date).toISOString();
+        event.contactInfo = contactInfo;
+
+        await event.save();
+        return res.json({ message: "Event updated successfully", event });
       }
-
-      // Update event in the database
-      const updatedEvent = await EventInfo.findByIdAndUpdate(
-        req.params.id,
-        { name, location, date, contactInfo, img: updatedImg },
-        { new: true }
-      );
-
-      res
-        .status(200)
-        .json({ message: "Event updated successfully!", event: updatedEvent });
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: "Failed to update event", details: error.message });
+      res.status(500).json({ error: "Update failed", details: error.message });
     }
   }
 );
