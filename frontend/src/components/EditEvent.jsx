@@ -22,7 +22,7 @@ const EditEvent = () => {
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const response = await axios.get(`https://feast-finder.onrender.com/api/events/${id}`);
+                const response = await axios.get(`http://localhost:3001/api/events/${id}`);
                 const event = response.data;
                 setEventData({
                     name: event.name,
@@ -55,32 +55,38 @@ const EditEvent = () => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+      
+        const token = localStorage.getItem("token"); // Get token
+        if (!token) {
+          toast.error("Login required");
+          return;
+        }
+      
         const formData = new FormData();
         formData.append("name", eventData.name);
         formData.append("location", eventData.location);
         formData.append("date", eventData.date);
         formData.append("contactInfo", eventData.contactInfo);
         if (eventData.img instanceof File) {
-            formData.append("img", eventData.img);
+          formData.append("img", eventData.img); // Only append if a new image is selected
         }
-
+      
         try {
-            const response = await axios.put(`https://feast-finder.onrender.com/api/events/${id}`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (response.status === 200) {
-                toast.success("Event updated successfully!");
-                setTimeout(() => navigate("/eventslist"), 3100);
-            }
-        } catch (error) {
-            console.error("Error updating event:", error);
-            toast.error("Failed to update event");
+          await axios.put(`http://localhost:3001/api/events/${id}`, formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,  // 🔹 Ensure token is included
+              "Content-Type": "multipart/form-data",
+            },
+          });
+      
+          showToast("Event updated successfully!", "success");
+          setTimeout(() => navigate("/eventslist"), 2000);
+        } catch (err) {
+          console.error("❌ Update failed:", err);
+          toast.error("Failed to update event");
         }
-    };
+      };
+      
 
     return (
         <div className="container my-5">
