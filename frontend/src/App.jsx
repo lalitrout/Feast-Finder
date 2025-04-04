@@ -9,8 +9,9 @@ import AboutUs from "./components/AboutUs";
 import EventsList from "./components/EventsList";
 import Notfound from "./NotFound";
 import Footer from "./Footer";
-import Logout from "./components/Logout"; // ✅ Import Logout Component
+import Logout from "./components/Logout";
 import "./App.css";
+import EditEvent from "./components/EditEvent";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/eventslist" element={<EventsList />} />
+          <Route path="/edit/:id" element={<EditEvent />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="*" element={<Notfound />} />
         </Routes>
