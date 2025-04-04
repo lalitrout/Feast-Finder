@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-
+import "react-toastify/dist/ReactToastify.css";
 
 const EditEvent = () => {
     const { id } = useParams();
@@ -34,12 +34,11 @@ const EditEvent = () => {
                 setPreviewImg(event.img);
             } catch (error) {
                 console.error("Error fetching event:", error);
-                toast.success("Failed to load event");
+                toast.error("Failed to load event");
             }
         };
         fetchEvent();
     }, [id]);
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -86,26 +85,6 @@ const EditEvent = () => {
     return (
         <div className="container my-5">
             <ToastContainer position="top-right" autoClose={3000} />
-            <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 9999 }}>
-                {toast.show && (
-                    <div
-                        className={`toast align-items-center text-bg-${toast.type} border-0 show`}
-                        role="alert"
-                        aria-live="assertive"
-                        aria-atomic="true"
-                    >
-                        <div className="d-flex">
-                            <div className="toast-body">{toast.message}</div>
-                            <button
-                                type="button"
-                                className="btn-close btn-close-white me-2 m-auto"
-                                onClick={() => setToast({ show: false, message: "", type: "" })}
-                            ></button>
-                        </div>
-                    </div>
-                )}
-            </div>
-
             <div className="card shadow-sm mx-auto" style={{ maxWidth: "600px" }}>
                 <div className="card-header text-white" style={{ backgroundColor: "#ff7f50" }}>
                     <h4 className="mb-0">Edit Event</h4>

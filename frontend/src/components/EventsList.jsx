@@ -143,9 +143,10 @@ const EventsList = () => {
       <div className="text-start mb-4">
         <button
           className="btn btn-primary"
+          style={{ backgroundColor: "#fa5", color: "white" }}
           onClick={() => setShowForm(!showForm)}
         >
-          {showForm ? "Hide Form -" : "Add New Event +"}
+          {showForm ? <i className="fa-solid fa-minus"></i> : <i className="fa-solid fa-plus"></i>}
         </button>
       </div>
 
@@ -202,7 +203,7 @@ const EventsList = () => {
               onChange={handleChange}
             />
           </div>
-          <button className="btn" type="submit" disabled={isSubmitting} style={{ backgroundColor: "orange", color: "white" }}>
+          <button className="btn" type="submit" disabled={isSubmitting} style={{ backgroundColor: "#fa5", color: "white" }}>
             {isSubmitting ? "Posting..." : "Submit Event"}
           </button>
         </form>
