@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 const EditEvent = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
 
     const [eventData, setEventData] = useState({
         name: "",
@@ -33,7 +32,7 @@ const EditEvent = () => {
                 });
                 setPreviewImg(event.img);
             } catch (error) {
-                console.error("Error fetching event:", error);
+                console.error("❌ Error fetching event:", error.response?.data || error.message);
                 toast.error("Failed to load event");
             }
         };
@@ -55,38 +54,42 @@ const EditEvent = () => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-      
-        const token = localStorage.getItem("token"); // Get token
+
+        const token = localStorage.getItem("token");
         if (!token) {
-          toast.error("Login required");
-          return;
+            toast.error("Login required");
+            return;
         }
-      
+
         const formData = new FormData();
         formData.append("name", eventData.name);
         formData.append("location", eventData.location);
         formData.append("date", eventData.date);
         formData.append("contactInfo", eventData.contactInfo);
         if (eventData.img instanceof File) {
-          formData.append("img", eventData.img); // Only append if a new image is selected
+            formData.append("img", eventData.img);
         }
-      
+
         try {
-          await axios.put(`https://feast-finder.onrender.com/api/events/${id}`, formData, {
-            headers: {
-              Authorization: `Bearer ${token}`,  // 🔹 Ensure token is included
-              "Content-Type": "multipart/form-data",
-            },
-          });
-      
-          showToast("Event updated successfully!", "success");
-          setTimeout(() => navigate("/eventslist"), 2000);
+            const response = await axios.put(
+                `https://feast-finder.onrender.com/api/events/${id}`,
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Refresh-Token": localStorage.getItem("refreshToken"), // Send refresh token
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            toast.success("Event updated successfully!");
+            setTimeout(() => navigate("/eventslist"), 2000);
         } catch (err) {
-          console.error("❌ Update failed:", err);
-          toast.error("Failed to update event");
+            console.error("❌ Update failed:", err.response?.data || err.message);
+            toast.error("Failed to update event: " + (err.response?.data?.error || "Unknown error"));
         }
-      };
-      
+    };
 
     return (
         <div className="container my-5">
