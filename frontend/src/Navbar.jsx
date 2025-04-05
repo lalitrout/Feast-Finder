@@ -32,12 +32,27 @@ function Navbar() {
     }
   };
 
+  const toggleNavbar = () => {
+    const navbar = document.getElementById("navbarNav");
+    const bsCollapse = new Collapse(navbar, { toggle: false });
+
+    if (navbar.classList.contains("show")) {
+      bsCollapse.hide();
+    } else {
+      bsCollapse.show();
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       const navbar = document.getElementById("navbarNav");
       const toggler = document.querySelector(".navbar-toggler");
 
-      if (navbar.classList.contains("show") && !navbar.contains(event.target) && !toggler.contains(event.target)) {
+      if (
+        navbar.classList.contains("show") &&
+        !navbar.contains(event.target) &&
+        !toggler.contains(event.target)
+      ) {
         closeNavbar();
       }
     };
@@ -72,7 +87,7 @@ function Navbar() {
             <span className="fw-bold fs-3 nav-head">FeastFinder</span>
           </Link>
 
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <button className="navbar-toggler" type="button" onClick={toggleNavbar}>
             <span className="navbar-toggler-icon"></span>
           </button>
 
