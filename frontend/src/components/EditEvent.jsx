@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const EditEvent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [previewImg, setPreviewImg] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [eventData, setEventData] = useState({
     name: "",
@@ -16,8 +18,7 @@ const EditEvent = () => {
     img: null,
   });
 
-  const [previewImg, setPreviewImg] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const orange = "#fa5";
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -35,10 +36,7 @@ const EditEvent = () => {
         });
         setPreviewImg(event.img);
       } catch (error) {
-        console.error(
-          "❌ Error fetching event:",
-          error.response?.data || error.message
-        );
+        console.error("❌ Error fetching event:", error.response?.data || error.message);
         toast.error("Failed to load event");
       }
     };
@@ -60,23 +58,23 @@ const EditEvent = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
 
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("Login required");
-      setLoading(false); // Stop loading
+      setLoading(false);
       return;
     }
 
     const formData = new FormData();
-    formData.append("name", eventData.name);
-    formData.append("location", eventData.location);
-    formData.append("date", eventData.date);
-    formData.append("contactInfo", eventData.contactInfo);
-    if (eventData.img instanceof File) {
-      formData.append("img", eventData.img);
-    }
+    Object.entries(eventData).forEach(([key, val]) => {
+      if (key === "img" && val instanceof File) {
+        formData.append(key, val);
+      } else if (key !== "img") {
+        formData.append(key, val);
+      }
+    });
 
     try {
       await axios.put(
@@ -85,13 +83,12 @@ const EditEvent = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Refresh-Token": localStorage.getItem("refreshToken"),
             "Content-Type": "multipart/form-data",
           },
         }
       );
 
-      toast.success("Event updated successfully!");
+      toast.success("🎉 Event updated!");
       setTimeout(() => navigate("/eventslist"), 2000);
     } catch (err) {
       console.error("❌ Update failed:", err.response?.data || err.message);
@@ -100,24 +97,23 @@ const EditEvent = () => {
           (err.response?.data?.error || "Unknown error")
       );
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
   return (
     <div className="container my-5">
-      <ToastContainer position="top-right" autoClose={3000} />
-      <div className="card shadow-sm mx-auto" style={{ maxWidth: "600px" }}>
-        <div
-          className="card-header text-white"
-          style={{ backgroundColor: "#ff7f50" }}
-        >
-          <h4 className="mb-0">Edit Event</h4>
+      <div
+        className="card shadow-lg text-white mx-auto"
+        style={{ maxWidth: "600px", backgroundColor: "#fff3e6" }}
+      >
+        <div className="card-header text-white text-center fw-bold" style={ { backgroundColor: orange } }>
+          ✏️ Edit Event Details
         </div>
-        <div className="card-body">
+        <div className="card-body p-4" >
           <form onSubmit={handleUpdate} encType="multipart/form-data">
             <div className="mb-3">
-              <label className="form-label">Event Name</label>
+              <label className="form-label fw-semibold text-orange" >Event Name</label>
               <input
                 type="text"
                 name="name"
@@ -127,8 +123,9 @@ const EditEvent = () => {
                 required
               />
             </div>
+
             <div className="mb-3">
-              <label className="form-label">Location</label>
+              <label className="form-label fw-semibold text-orange">Location</label>
               <input
                 type="text"
                 name="location"
@@ -138,8 +135,9 @@ const EditEvent = () => {
                 required
               />
             </div>
+
             <div className="mb-3">
-              <label className="form-label">Date</label>
+              <label className="form-label fw-semibold text-orange">Date</label>
               <input
                 type="date"
                 name="date"
@@ -149,8 +147,9 @@ const EditEvent = () => {
                 required
               />
             </div>
+
             <div className="mb-3">
-              <label className="form-label">Contact Info</label>
+              <label className="form-label fw-semibold text-orange">Contact Info</label>
               <input
                 type="text"
                 name="contactInfo"
@@ -159,8 +158,9 @@ const EditEvent = () => {
                 className="form-control"
               />
             </div>
+
             <div className="mb-3">
-              <label className="form-label">Event Image</label>
+              <label className="form-label fw-semibold text-orange">Event Image</label>
               <input
                 type="file"
                 accept="image/*"
@@ -168,20 +168,25 @@ const EditEvent = () => {
                 className="form-control"
               />
               {previewImg && (
-                <div className="mt-2 text-center">
+                <div className="mt-3 text-center">
                   <img
                     src={previewImg}
                     alt="Preview"
-                    className="img-thumbnail"
-                    style={{ maxWidth: "200px", maxHeight: "200px" }}
+                    className="img-thumbnail shadow-sm"
+                    style={{ maxWidth: "220px", maxHeight: "220px" }}
                   />
                 </div>
               )}
             </div>
+
             <button
               type="submit"
-              className="btn w-100 text-white"
-              style={{ backgroundColor: "#ff7f50" }}
+              className="btn w-100 text-white fw-semibold"
+              style={{
+                backgroundColor: "#ff914d",
+                borderRadius: "8px",
+                padding: "10px",
+              }}
               disabled={loading}
             >
               {loading ? "Updating..." : "Update Event"}

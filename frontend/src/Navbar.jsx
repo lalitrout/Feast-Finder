@@ -37,11 +37,7 @@ function Navbar() {
       const navbar = document.getElementById("navbarNav");
       const toggler = document.querySelector(".navbar-toggler");
 
-      if (
-        navbar.classList.contains("show") &&
-        !navbar.contains(event.target) &&
-        !toggler.contains(event.target)
-      ) {
+      if (navbar.classList.contains("show") && !navbar.contains(event.target) && !toggler.contains(event.target)) {
         closeNavbar();
       }
     };
@@ -50,27 +46,6 @@ function Navbar() {
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
-  // ✅ Toggler click handles toggle manually
-  useEffect(() => {
-    const toggler = document.querySelector(".navbar-toggler");
-    const navbar = document.getElementById("navbarNav");
-
-    const handleTogglerClick = () => {
-      const bsCollapse = new Collapse(navbar, { toggle: false });
-      if (navbar.classList.contains("show")) {
-        bsCollapse.hide();
-      } else {
-        bsCollapse.show();
-      }
-    };
-
-    toggler.addEventListener("click", handleTogglerClick);
-
-    return () => {
-      toggler.removeEventListener("click", handleTogglerClick);
     };
   }, []);
 
@@ -97,7 +72,7 @@ function Navbar() {
             <span className="fw-bold fs-3 nav-head">FeastFinder</span>
           </Link>
 
-          <button className="navbar-toggler" type="button">
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span className="navbar-toggler-icon"></span>
           </button>
 

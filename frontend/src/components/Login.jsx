@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./Auth.css";
+import "./Auth.css"; // includes the orange styling
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -17,14 +17,12 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const response = await axios.post("https://feast-finder.onrender.com/api/login", formData);
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.userId);
-        
         toast.success("Login successful! Redirecting...", { autoClose: 2000 });
 
         setTimeout(() => {
@@ -43,26 +41,46 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
-      <ToastContainer position="top-right" autoClose={3000} />
-      
-      <div className="auth-card">
-        <h2 className="text-center mb-4">Login</h2>
+    <div className="login-page d-flex align-items-center justify-content-center min-vh-100">
+      <div className="card login-card shadow-lg p-4">
+        <h3 className="text-center text-orange mb-4">FeastFinder Login</h3>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">Email</label>
-            <input type="email" name="email" className="form-control" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
+            <label className="form-label text-orange">Email address</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="Enter your email"
+              required
+            />
           </div>
           <div className="mb-3">
-            <label className="form-label">Password</label>
-            <input type="password" name="password" className="form-control" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
+            <label className="form-label text-orange">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="Enter your password"
+              required
+            />
           </div>
-          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          <button type="submit" className="btn btn-orange w-100" disabled={loading}>
+            {loading ? (
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            ) : null}
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className="text-center mt-3">
-          Don't have an account? <Link to="/signup" className="text-orange">Sign up</Link>
+        <p className="text-center mt-3 mb-0">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-orange text-decoration-none fw-semibold">
+            Sign up
+          </Link>
         </p>
       </div>
     </div>

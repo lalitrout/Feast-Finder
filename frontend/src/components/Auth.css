@@ -1,60 +1,31 @@
-.auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #fff;
-  }
-  
-  .auth-card {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-  }
-  
-  .btn-primary {
-    background-color: #FA5;
-    border: none;
-  }
-  
-  .btn-primary:hover {
-    background-color: #e59400;
-  }
-  
-  .form-control:focus {
-    border-color: #FA5;
-    box-shadow: 0px 0px 5px rgba(250, 165, 5, 0.5);
-  }
-  
-  .text-orange {
-    color: #FA5;
-    text-decoration: none;
-  }
-  
-  .text-orange:hover {
-    text-decoration: underline;
-  }
-  /* Primary Button (Orange) */
-.btn-primary {
-    background-color: #FA5 !important;
-    border: none !important;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
-  /* Button Hover */
-  .btn-primary:hover {
-    background-color: #e59400 !important;
-  }
-  
-  /* Button Clicked (Active) */
-  .btn-primary:active, 
-  .btn-primary:focus, 
-  .btn-primary:focus-visible {
-    background-color: #FA5 !important;
-    border-color: #FA5 !important;
-    box-shadow: 0px 0px 5px rgba(250, 165, 5, 0.5) !important;
-  }
-  
+:root {
+  --orange: #ffaa55;
+}
+
+.login-card {
+  border-radius: 1rem;
+  max-width: 400px;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.text-orange {
+  color: var(--orange);
+}
+
+.btn-orange {
+  background-color: var(--orange);
+  border: none;
+  color: white;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-orange:hover {
+  background-color: #ff9933;
+}
+
+.form-control:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 0.2rem rgba(255, 170, 85, 0.25);
+}
