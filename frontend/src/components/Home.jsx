@@ -70,7 +70,7 @@ function Home() {
           />
         </div>
         <div className="col-lg-6 col-sm-12">
-          <h1 className="fw-bold text-orange">How It Works</h1>
+          <h1 className="fw-bold text-orange">How It Works?</h1>
           <p className="mt-4 fs-5 text-secondary">
             🍽️ “See a party? Smell biryani? Hear distant dhol beats? Don’t just
             wonder—share it! Post the event details, and let fellow foodies
