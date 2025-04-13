@@ -45,7 +45,7 @@ const EventsList = () => {
       );
       setEvents(sortedEvents);
     } catch (error) {
-      toast.error("Error fetching events!");
+      toast.error("Oops! Events not loading.📶Refresh?");
     } finally {
       setLoading(false);
     }
@@ -266,7 +266,7 @@ const EventsList = () => {
           </div>
         ) : events.length === 0 ? (
           <div className="col-12 text-center">
-            <p className="text-muted">No events yet. Be the first to post!</p>
+            <p className="text-muted">Maybe... no events yet. Be the first to post!</p>
           </div>
         ) : (
           events.map((event) => (
