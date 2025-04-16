@@ -66,7 +66,7 @@ app.post("/api/users", async (req, res) => {
     const token = jwt.sign(
       { userId: newUser._id, email: newUser.email },
       SECRET_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
     res.status(201).json({
       success: true,
@@ -94,7 +94,7 @@ app.post("/api/login", async (req, res) => {
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       SECRET_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
     res.json({ message: "Login successful", token, userId: user._id });
   } catch (error) {
